@@ -5,8 +5,6 @@ import storage.ListStorage;
 import storage.Storage;
 
 import java.io.*;
-import java.time.LocalDateTime;
-import java.util.List;
 
 public class App {
     public static void main(String[] args) {
@@ -19,12 +17,6 @@ public class App {
         var b2 = Controller.createBatch("Bøv", 9.2);
         var b3 = Controller.createBatch("Bæv", 3.2);
         var f1 = Controller.createFad(2.2, "Søren", "Eg", false);
-        Controller.registrerPåfyldning(
-                LocalDateTime.now(),
-                0.6,
-                List.of(b1, b2, b3),
-                List.of(f1)
-        );
 
 
         System.out.println("=================");
@@ -34,10 +26,6 @@ public class App {
         System.out.println("Fade");
         Controller.getFade().forEach(System.out::println);
         System.out.println("=================");
-        System.out.println("Destillater");
-        Controller.getDestillater().forEach(System.out::println);
-        System.out.println("=================");
-
         saveStorage(storage);
     }
 

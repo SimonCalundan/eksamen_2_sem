@@ -3,6 +3,7 @@ package application.model;
 import java.io.Serializable;
 
 public class Fad implements Serializable {
+    private static int nextNr = 1;
     private int nr;
     private double størrelseLiter;
     private Destillat destillat;
@@ -11,6 +12,7 @@ public class Fad implements Serializable {
     private String leverandør;
 
     public Fad(double størrelseLiter, String leverandør, String træsort, boolean erGenbrugt) {
+        this.nr = nextNr++;
         this.størrelseLiter = størrelseLiter;
         this.leverandør = leverandør;
         this.træsort = træsort;
@@ -43,7 +45,7 @@ public class Fad implements Serializable {
         return destillat;
     }
 
-    public boolean isErGenbrugt() {
+    public boolean erGenbrugt() {
         return erGenbrugt;
     }
 

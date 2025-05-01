@@ -21,6 +21,17 @@ public abstract class Controller {
 
     public static Destillat registrerPåfyldning(LocalDateTime datoForPåfyldning, double alkoholProcent,
                                                 List<Batch> batches, List<Fad> fade) {
+        // TODO
+        // Denne metode skal laves om ift. nye ændringer i klasse diagrammet
+        if (batches.isEmpty()){
+            throw  new RuntimeException("Der skal mindst et batch til at lave et destillat");
+        }
+        if (fade.isEmpty()){
+            throw  new RuntimeException("Mindst et fad skal være valgt for at kunne registrere påfyldning");
+        }
+
+
+
         var destillatToAdd = new Destillat(datoForPåfyldning, alkoholProcent, batches);
         for (var fad : fade){
             fad.setDestillat(destillatToAdd);

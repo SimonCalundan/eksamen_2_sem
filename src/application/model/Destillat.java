@@ -7,19 +7,27 @@ import java.util.Collections;
 import java.util.List;
 
 public class Destillat implements Serializable {
+    private static int nextId = 1;
     private int id;
     private LocalDateTime datoForPåfyldning;
     private double alkoholProcent;
     private List<Batch> batches;
+    // TODO
+    // Skal kun være et enkelt fad
     private List<Fad> fade;
 
     public Destillat(LocalDateTime datoForPåfyldning, double alkoholProcent, List<Batch> batches) {
+        // TODO
+        // Destillat constructor skal laves om ud fra nye klasse diagram
+        this.id = nextId++;
         this.datoForPåfyldning = datoForPåfyldning;
         this.alkoholProcent = alkoholProcent;
         this.batches = batches;
         this.fade = new ArrayList<>();
     }
 
+    // TODO
+    // Metoder for at rette og tilføje fade skal fjernes / rettes til at matche nye struktur
     public void addFad(Fad fad) {
         fad.setDestillat(this);
         fade.add(fad);
