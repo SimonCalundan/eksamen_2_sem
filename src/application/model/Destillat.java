@@ -11,6 +11,8 @@ public class Destillat implements Serializable {
     private int id;
     private LocalDateTime datoForPåfyldning;
     private double alkoholProcent;
+    // TODO
+    // Skal opdaters til at være forbundet med associations klassen i stedet for
     private List<Batch> batches;
     // TODO
     // Skal kun være et enkelt fad
