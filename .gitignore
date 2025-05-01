@@ -1,3 +1,5 @@
+### Storage ###
+storage.ser
 ### IntelliJ IDEA ###
 out/
 !**/src/main/**/out/
