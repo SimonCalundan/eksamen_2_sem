@@ -13,9 +13,9 @@ public class App {
             storage = new ListStorage();
         }
         Controller.setStorage(storage);
-        var b1 = Controller.createBatch("Test", 2.2);
-        var b2 = Controller.createBatch("Bøv", 9.2);
-        var b3 = Controller.createBatch("Bæv", 3.2);
+        var b1 = Controller.createBatch("Test", 2.2,0.40);
+        var b2 = Controller.createBatch("Bøv", 9.2,0.10);
+        var b3 = Controller.createBatch("Bæv", 3.2,0.90);
         var f1 = Controller.createFad(2.2, "Søren", "Eg", false);
 
 

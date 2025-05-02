@@ -20,19 +20,6 @@ public class Fad implements Serializable {
         this.destillat = null;
     }
 
-    public void setDestillat(Destillat destillat) {
-        if (this.destillat != destillat) {
-            Destillat oldDestillat = this.destillat;
-            if (oldDestillat != null) {
-                oldDestillat.removeFad(this);
-            }
-            this.destillat = destillat;
-            if (destillat != null) {
-                destillat.addFad(this);
-            }
-        }
-    }
-
     public int getNr() {
         return nr;
     }
@@ -62,5 +49,12 @@ public class Fad implements Serializable {
         return "%d, %.2f, %s, %b, %s, %s"
                 .formatted(nr, størrelseLiter, (getDestillat() == null ? "intet destillat" : getDestillat().getId()), erGenbrugt,
                         træsort, leverandør);
+    }
+
+    //linkmetoder
+    public void setDestillat(Destillat destillat) {
+        if (this.destillat != destillat) {
+            this.destillat = destillat;
+        }
     }
 }
