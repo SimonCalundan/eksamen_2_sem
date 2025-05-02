@@ -3,6 +3,7 @@ package application.controller;
 import application.model.Batch;
 import application.model.Destillat;
 import application.model.Fad;
+import application.model.PåfyldtMængde;
 import storage.Storage;
 
 import java.time.LocalDateTime;
@@ -15,35 +16,22 @@ public abstract class Controller {
         storage = newStorage;
     }
 
-    public static List<Destillat> getDestillater() {
-        return storage.getDestillater();
+    //Batch
+    public static List<Batch> getBatches() {
+        return storage.getBatches();
     }
 
-    public static Destillat registrerPåfyldning(LocalDateTime datoForPåfyldning, double alkoholProcent,
-                                                List<Batch> batches, List<Fad> fade) {
-        // TODO
-        // Denne metode skal laves om ift. nye ændringer i klasse diagrammet
-        if (batches.isEmpty()){
-            throw  new RuntimeException("Der skal mindst et batch til at lave et destillat");
-        }
-        if (fade.isEmpty()){
-            throw  new RuntimeException("Mindst et fad skal være valgt for at kunne registrere påfyldning");
-        }
-
-
-
-        var destillatToAdd = new Destillat(datoForPåfyldning, alkoholProcent, batches);
-        for (var fad : fade){
-            fad.setDestillat(destillatToAdd);
-        }
-        storage.addDestillat(destillatToAdd);
-        return destillatToAdd;
+    public static Batch createBatch(String navn, double mængdeILiter, double alkoholProcent) {
+        var batchToAdd = new Batch(navn, mængdeILiter, alkoholProcent);
+        storage.addBatch(batchToAdd);
+        return batchToAdd;
     }
 
-    public static void removeDestillat(Destillat destillat) {
-        storage.removeDestillat(destillat);
+    public static void removeBatch(Batch batch) {
+        storage.removeBatch(batch);
     }
 
+    //Fad
     public static List<Fad> getFade() {
         return storage.getFade();
     }
@@ -58,19 +46,34 @@ public abstract class Controller {
         storage.removeFad(fad);
     }
 
-    public static List<Batch> getBatches() {
-        return storage.getBatches();
+    //Destillat
+    public static Destillat createDestillat(LocalDateTime datoForPåfyldning, Fad fad) {
+        var destillatToAdd = new Destillat(datoForPåfyldning, fad);
+        storage.addDestillat(destillatToAdd);
+        return destillatToAdd;
     }
 
-    public static Batch createBatch(String navn, double mængdeLiter) {
-        var batchToAdd = new Batch(navn, mængdeLiter);
-        storage.addBatch(batchToAdd);
-        return batchToAdd;
+    public static PåfyldtMængde createPåfyldtMængder(Destillat destillat, Batch batch, double mængdePåfyldt) {
+        if (batch.getMængdeLiter() - mængdePåfyldt < 0) {
+            throw new RuntimeException("Der er ikke nok mændge i batchen");
+        }
+        batch.setMængdeLiter(batch.getMængdeLiter() - mængdePåfyldt);
+        return destillat.createPåfyldtMængde(mængdePåfyldt,batch);
     }
 
-    public static void removeBatch(Batch batch) {
-        storage.removeBatch(batch);
+    public static void removeDestillat(Destillat destillat) {
+        storage.removeDestillat(destillat);
     }
+
+    public static List<Destillat> getDestillater() {
+        return storage.getDestillater();
+    }
+
+
+
+
+
+
 
 
 }

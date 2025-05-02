@@ -69,7 +69,7 @@ class ControllerTest {
 
     @org.junit.jupiter.api.Test
     void getBatches() {
-        Controller.createBatch("Testnavn", 2.5);
+        Controller.createBatch("Testnavn", 2.5, 0.8);
         assertFalse(Controller.getBatches().isEmpty());
     }
 
@@ -77,7 +77,8 @@ class ControllerTest {
     void createBatch() {
         String navn = "Testnavn";
         double mængdeLiter = 2.5;
-        Controller.createBatch(navn, mængdeLiter);
+        double alkoholProcent = 0.10;
+        Controller.createBatch(navn, mængdeLiter, alkoholProcent);
 
         Batch batch = Controller.getBatches().getFirst();
 
@@ -89,7 +90,7 @@ class ControllerTest {
 
     @org.junit.jupiter.api.Test
     void removeBatch() {
-        Batch batch = Controller.createBatch("Testnavn", 2.5);
+        Batch batch = Controller.createBatch("Testnavn", 2.5, 0.42);
         assertFalse(Controller.getBatches().isEmpty());
         Controller.removeBatch(batch);
         assertTrue(Controller.getBatches().isEmpty());
