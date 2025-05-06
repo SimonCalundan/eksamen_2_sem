@@ -1,9 +1,10 @@
 package application.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Lager {
+public class Lager implements Serializable {
     private String navn;
     private List<Reol> reoler;
 

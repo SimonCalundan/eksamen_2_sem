@@ -1,9 +1,10 @@
 package application.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Hylde {
+public class Hylde implements Serializable {
     private String navn;
     private Reol reol;
     private List<Fad> fade;
