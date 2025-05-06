@@ -22,6 +22,12 @@ public abstract class Controller {
     }
 
     public static Batch createBatch(String navn, double mængdeILiter, double alkoholProcent) {
+        if (mængdeILiter < 0) {
+            throw new IllegalArgumentException("mængdeLiter må ikke være mindre en 0");
+        }
+        if (alkoholProcent < 0 || alkoholProcent > 1) {
+            throw new IllegalArgumentException("alkoholProcent må ikke være mindre en 0 eller større end 1");
+        }
         var batchToAdd = new Batch(navn, mængdeILiter, alkoholProcent);
         storage.addBatch(batchToAdd);
         return batchToAdd;
@@ -37,6 +43,9 @@ public abstract class Controller {
     }
 
     public static Fad createFad(double størrelseLiter, String leverandør, String træsort, boolean erGenbrugt) {
+        if (størrelseLiter < 0) {
+            throw new IllegalArgumentException("størrelseLiter må ikke være mindre end 0");
+        }
         var fadToAdd = new Fad(størrelseLiter, leverandør, træsort, erGenbrugt);
         storage.addFad(fadToAdd);
         return fadToAdd;
@@ -48,6 +57,12 @@ public abstract class Controller {
 
     //Destillat
     public static Destillat createDestillat(LocalDateTime datoForPåfyldning, Fad fad) {
+        if (datoForPåfyldning.isAfter(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Dato for påfyldning må ikke være efter nuværende tidspunk");
+        }
+        if (fad == null) {
+            throw new IllegalArgumentException("Fad må ikke være null");
+        }
         var destillatToAdd = new Destillat(datoForPåfyldning, fad);
         storage.addDestillat(destillatToAdd);
         return destillatToAdd;
@@ -57,8 +72,17 @@ public abstract class Controller {
         if (batch.getMængdeLiter() - mængdePåfyldt < 0) {
             throw new RuntimeException("Der er ikke nok mændge i batchen");
         }
+        if (mængdePåfyldt <= 0) {
+            throw new IllegalArgumentException("mængdePåfyldt skal være større end 0");
+        }
+        if (destillat == null) {
+            throw new IllegalArgumentException("Destillat må ikke være null");
+        }
+        if (batch == null){
+            throw new IllegalArgumentException("Batch må ikke være null");
+        }
         batch.setMængdeLiter(batch.getMængdeLiter() - mængdePåfyldt);
-        return destillat.createPåfyldtMængde(mængdePåfyldt,batch);
+        return destillat.createPåfyldtMængde(mængdePåfyldt, batch);
     }
 
     public static void removeDestillat(Destillat destillat) {
@@ -68,12 +92,6 @@ public abstract class Controller {
     public static List<Destillat> getDestillater() {
         return storage.getDestillater();
     }
-
-
-
-
-
-
 
 
 }

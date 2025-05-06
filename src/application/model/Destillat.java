@@ -17,6 +17,7 @@ public class Destillat implements Serializable {
         this.id = nextId++;
         this.datoForPåfyldning = datoForPåfyldning;
         fad.setDestillat(this);
+        this.fad = fad;
     }
 
     public int getId() {
@@ -51,5 +52,9 @@ public class Destillat implements Serializable {
         if (påfyldteMængder.contains(påfyldning)) {
             påfyldteMængder.remove(påfyldning);
         }
+    }
+
+    public Fad getFad() {
+        return fad;
     }
 }
