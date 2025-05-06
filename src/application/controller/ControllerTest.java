@@ -1,8 +1,6 @@
 package application.controller;
 
-import application.model.Batch;
-import application.model.Destillat;
-import application.model.Fad;
+import application.model.*;
 import storage.ListStorage;
 import storage.Storage;
 
@@ -13,11 +11,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ControllerTest {
     private static Storage storage;
+    private static Lager lager;
+    private static Reol reol;
+    private static Hylde hylde;
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
         storage = new ListStorage();
         Controller.setStorage(storage);
+
+        lager = Controller.createLager("Lager Lars");
+        reol = Controller.createReol(lager, "fadreol 01");
+        hylde = Controller.createHylde(reol, "fadhylde 01");
     }
 
     @org.junit.jupiter.api.Test
@@ -36,8 +41,13 @@ class ControllerTest {
     }
 
     @org.junit.jupiter.api.Test
+    void getLager() {
+
+    }
+
+    @org.junit.jupiter.api.Test
     void getFade() {
-        Controller.createFad(2.2, "Per", "Eg", true);
+        Controller.createFad(2.2, "Per", "Eg", 1, hylde);
         assertFalse(Controller.getFade().isEmpty());
     }
 
@@ -46,8 +56,8 @@ class ControllerTest {
         double størrelseLiter = 2.2;
         String leverandør = "Per";
         String træsort = "Eg";
-        boolean erGenbrugt = true;
-        Controller.createFad(størrelseLiter, leverandør, træsort, erGenbrugt);
+        int gangeBrugt = 1;
+        Controller.createFad(størrelseLiter, leverandør, træsort, gangeBrugt, hylde);
 
         Fad fad = Controller.getFade().getFirst();
 
@@ -55,13 +65,13 @@ class ControllerTest {
                 () -> assertEquals(størrelseLiter, fad.getStørrelseLiter()),
                 () -> assertEquals(leverandør, fad.getLeverandør()),
                 () -> assertEquals(træsort, fad.getTræsort()),
-                () -> assertEquals(erGenbrugt, fad.erGenbrugt())
+                () -> assertEquals(gangeBrugt, fad.getBrugtGange())
         );
     }
 
     @org.junit.jupiter.api.Test
     void removeFad() {
-        Fad fad = Controller.createFad(2.2, "Per", "Eg", true);
+        Fad fad = Controller.createFad(2.2, "Per", "Eg", 1, hylde);
         assertFalse(Controller.getFade().isEmpty());
         Controller.removeFad(fad);
         assertTrue(Controller.getFade().isEmpty());
