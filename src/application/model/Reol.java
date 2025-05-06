@@ -31,4 +31,9 @@ public class Reol {
     public List<Hylde> getHylder() {
         return new ArrayList<>(hylder);
     }
+
+    @Override
+    public String toString() {
+        return navn;
+    }
 }

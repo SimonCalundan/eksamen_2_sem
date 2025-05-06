@@ -24,4 +24,9 @@ public class Lager {
     public List<Reol> getReoler() {
         return new ArrayList<>(reoler);
     }
+
+    @Override
+    public String toString() {
+        return navn;
+    }
 }

@@ -27,4 +27,9 @@ public class Hylde {
             fad.setHylde(null);
         }
     }
+
+    @Override
+    public String toString() {
+        return navn;
+    }
 }
