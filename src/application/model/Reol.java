@@ -1,9 +1,10 @@
 package application.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Reol {
+public class Reol implements Serializable {
     private String navn;
     private Lager lager;
     private List<Hylde> hylder;

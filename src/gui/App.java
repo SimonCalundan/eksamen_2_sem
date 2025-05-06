@@ -13,10 +13,14 @@ public class App {
             storage = new ListStorage();
         }
         Controller.setStorage(storage);
+
+        var lager = Controller.createLager("Lager Lars");
+        var reol = Controller.createReol(lager, "fadreol 01");
+        var hylde = Controller.createHylde(reol, "fadhylde 01");
         var b1 = Controller.createBatch("Test", 2.2,0.40);
         var b2 = Controller.createBatch("Bøv", 9.2,0.10);
         var b3 = Controller.createBatch("Bæv", 3.2,0.90);
-        var f1 = Controller.createFad(2.2, "Søren", "Eg", false);
+        var f1 = Controller.createFad(2.2, "Søren", "Eg", 0, hylde);
 
 
         System.out.println("=================");

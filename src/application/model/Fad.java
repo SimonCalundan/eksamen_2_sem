@@ -62,8 +62,8 @@ public class Fad implements Serializable {
 
     @Override
     public String toString() {
-        return "%d, %.2f, %s, %b, %s, %s, %s"
-                .formatted(nr, størrelseLiter, (getDestillat() == null ? "intet destillat" : getDestillat().getId()), brugtGange, hylde,
+        return "%d, %.2f, %s, %s, %s, %s, %s"
+                .formatted(nr, størrelseLiter, (getDestillat() == null ? "intet destillat" : getDestillat().getId()), "gange brugt: " + brugtGange, hylde,
                         træsort, leverandør);
     }
 
