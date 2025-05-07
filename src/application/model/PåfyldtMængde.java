@@ -18,4 +18,8 @@ public class PåfyldtMængde {
     public Batch getBatch() {
         return batch;
     }
+
+    public double getMængdeILiter() {
+        return mængdeILiter;
+    }
 }
