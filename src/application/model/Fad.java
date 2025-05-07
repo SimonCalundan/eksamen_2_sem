@@ -11,6 +11,13 @@ public class Fad implements Serializable {
     private String træsort;
     private String leverandør;
 
+    /**
+     * Pre: størrelseLiter > 0
+     * @param størrelseLiter
+     * @param leverandør
+     * @param træsort
+     * @param erGenbrugt
+     */
     public Fad(double størrelseLiter, String leverandør, String træsort, boolean erGenbrugt) {
         this.nr = nextNr++;
         this.størrelseLiter = størrelseLiter;

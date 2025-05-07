@@ -22,7 +22,7 @@ class ControllerTest {
         // TC1 - grænseværdi (dato = nu)
         {
             var datoForPåfyldning = LocalDateTime.now();
-            var fad = Controller.createFad(0.0, "Testleverandør", "Eg", false);
+            var fad = Controller.createFad(0.5, "Testleverandør", "Eg", false);
             Controller.createDestillat(datoForPåfyldning, fad);
             var destillat = Controller.getDestillater().getLast();
             assertAll("TC1 - grænseværdi",
@@ -32,7 +32,7 @@ class ControllerTest {
         // TC2 - gyldig
         {
             var datoForPåfyldning = LocalDateTime.of(2025, 5, 6, 11, 50);
-            var fad = Controller.createFad(0.0, "Testleverandør", "Eg", false);
+            var fad = Controller.createFad(0.5, "Testleverandør", "Eg", false);
             Controller.createDestillat(datoForPåfyldning, fad);
             var destillat = Controller.getDestillater().getLast();
             assertAll("TC2 - gyldig",
@@ -50,7 +50,7 @@ class ControllerTest {
         // TC4 - ugyldig (datoForPåfyldning = nu + 10 dage)
         {
             var datoForPåfyldning = LocalDateTime.now().plusDays(10);
-            var fad = Controller.createFad(0.0, "Testleverandør", "Eg", false);
+            var fad = Controller.createFad(0.5, "Testleverandør", "Eg", false);
             Exception exception = assertThrows(IllegalArgumentException.class, () -> {
                 Controller.createDestillat(datoForPåfyldning, fad);
             });
@@ -60,14 +60,14 @@ class ControllerTest {
 
     @org.junit.jupiter.api.Test
     void createPåfyldtMængder() {
-        var fad = Controller.createFad(0.0, "Testleverandør", "Eg", false);
+        var fad = Controller.createFad(0.5, "Testleverandør", "Eg", false);
         var destillat = Controller.createDestillat(LocalDateTime.now(), fad);
         var batch = Controller.createBatch("TestBatch", 30, 0.6);
 
         // TC1 - grænseværdi (mængdePåfyldt = 0.1)
         {
             double mængdePåfyldt = 0.1;
-            var pmFromCreation = Controller.createPåfyldtMængder(destillat, batch, mængdePåfyldt);
+            var pmFromCreation = Controller.createPåfyldtMængde(destillat, batch, mængdePåfyldt);
 
             PåfyldtMængde pmFromDestillat = destillat.getPåfyldteMængder().getLast();
 
@@ -79,7 +79,7 @@ class ControllerTest {
         // TC2 - gyldig
         {
             double mængdePåfyldt = 11.5;
-            var pmFromCreation = Controller.createPåfyldtMængder(destillat, batch, mængdePåfyldt);
+            var pmFromCreation = Controller.createPåfyldtMængde(destillat, batch, mængdePåfyldt);
 
             PåfyldtMængde pmFromDestillat = destillat.getPåfyldteMængder().getLast();
 
@@ -92,7 +92,7 @@ class ControllerTest {
         {
             double mængdePåfyldt = -3.5;
             Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                Controller.createPåfyldtMængder(destillat, batch, mængdePåfyldt);
+                Controller.createPåfyldtMængde(destillat, batch, mængdePåfyldt);
             });
             assertEquals("mængdePåfyldt skal være større end 0", exception.getMessage(), "TC3 - ugyldig (mængdePåfyldt = -3.5)");
         }
@@ -100,17 +100,17 @@ class ControllerTest {
         {
             double mængdePåfyldt = 15.0;
             Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                Controller.createPåfyldtMængder(null, batch, mængdePåfyldt);
+                Controller.createPåfyldtMængde(null, batch, mængdePåfyldt);
             });
             assertEquals("Destillat må ikke være null", exception.getMessage(), "TC4 - ugyldig (destillat = null)");
         }
         // TC5 - ugyldig (batch = null)
         {
             double mængdePåfyldt = 15.0;
-//            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-//                Controller.createPåfyldtMængder(destillat, null, mængdePåfyldt);
-//            });
-//            assertEquals("Batch må ikke være null", exception.getMessage(), "TC5 - ugyldig (batch = null)");
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                Controller.createPåfyldtMængde(destillat, null, mængdePåfyldt);
+            });
+            assertEquals("Batch må ikke være null", exception.getMessage(), "TC5 - ugyldig (batch = null)");
         }
     }
 
@@ -118,7 +118,7 @@ class ControllerTest {
     void createFad() {
         // TC1 - grænseværdi (0.0 liter)
         {
-            double størrelseLiter = 0.0;
+            double størrelseLiter = 0.5;
             String leverandør = "TestLeverandør1";
             String træsort = "Eg";
             boolean erGenbrugt = false;
@@ -169,10 +169,10 @@ class ControllerTest {
 
     @org.junit.jupiter.api.Test
     void createBatch() {
-        // TC1 - grænseværdi (mængdeLiter = 0.0)
+        // TC1 - grænseværdi (mængdeLiter = 0.5)
         {
             String navn = "TestBatch";
-            double mængdeLiter = 0.0;
+            double mængdeLiter = 0.5;
             double alkoholProcent = 0.10;
             Controller.createBatch(navn, mængdeLiter, alkoholProcent);
             Batch batch = Controller.getBatches().getLast();
