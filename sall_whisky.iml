@@ -39,5 +39,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" exported="" name="javafx.21_NY" level="application" />
   </component>
 </module>
