@@ -1,6 +1,7 @@
 package application.controller;
 
 import application.model.*;
+import org.junit.jupiter.api.Test;
 import storage.ListStorage;
 import storage.Storage;
 
@@ -239,5 +240,21 @@ class ControllerTest {
             });
             assertEquals("alkoholProcent må ikke være mindre en 0 eller større end 1", exception.getMessage(), "TC4 - ugyldig værdi (mængdeLiter = -3.1)");
         }
+    }
+
+    @Test
+    void flytFadTilNyPlacering() {
+        Lager nyLager = Controller.createLager("Lager Lars");
+        Reol nyReol = Controller.createReol(nyLager, "fadreol 01");
+        Hylde nyHylde = Controller.createHylde(nyReol, "fadhylde 01");
+
+        var fad = Controller.createFad(10.5, "Test leverandør", "Eg", 3, hylde);
+        assertEquals(hylde, fad.getHylde());
+
+        Controller.flytFadTilNyPlacering(fad, nyHylde);
+        assertEquals(nyHylde, fad.getHylde());
+        assertNotEquals(hylde, fad.getHylde());
+
+
     }
 }
