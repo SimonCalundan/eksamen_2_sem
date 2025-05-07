@@ -29,7 +29,8 @@ class ControllerTest {
         // TC1 - grænseværdi (dato = nu)
         {
             var datoForPåfyldning = LocalDateTime.now();
-            var fad = Controller.createFad(0.5, "Testleverandør", "Eg", false);
+            var fad = Controller.createFad(0.5, "Testleverandør",
+                    "Eg", 2, hylde);
             Controller.createDestillat(datoForPåfyldning, fad);
             var destillat = Controller.getDestillater().getLast();
             assertAll("TC1 - grænseværdi",
@@ -38,8 +39,10 @@ class ControllerTest {
         }
         // TC2 - gyldig
         {
-            var datoForPåfyldning = LocalDateTime.of(2025, 5, 6, 11, 50);
-            var fad = Controller.createFad(0.5, "Testleverandør", "Eg", false);
+            var datoForPåfyldning = LocalDateTime.of(2025, 5,
+                    6, 11, 50);
+            var fad = Controller.createFad(0.5, "Testleverandør",
+                    "Eg", 2, hylde);
             Controller.createDestillat(datoForPåfyldning, fad);
             var destillat = Controller.getDestillater().getLast();
             assertAll("TC2 - gyldig",
@@ -48,7 +51,8 @@ class ControllerTest {
         }
         // TC3 - ugyldig (Fad = null)
         {
-            var datoForPåfyldning = LocalDateTime.of(2025, 5, 6, 11, 50);
+            var datoForPåfyldning = LocalDateTime.of(2025, 5,
+                    6, 11, 50);
             Exception exception = assertThrows(IllegalArgumentException.class, () -> {
                 Controller.createDestillat(datoForPåfyldning, null);
             });
@@ -57,17 +61,19 @@ class ControllerTest {
         // TC4 - ugyldig (datoForPåfyldning = nu + 10 dage)
         {
             var datoForPåfyldning = LocalDateTime.now().plusDays(10);
-            var fad = Controller.createFad(0.5, "Testleverandør", "Eg", false);
+            var fad = Controller.createFad(0.5, "Testleverandør",
+                    "Eg", 2, hylde);
             Exception exception = assertThrows(IllegalArgumentException.class, () -> {
                 Controller.createDestillat(datoForPåfyldning, fad);
             });
-            assertEquals("Dato for påfyldning må ikke være efter nuværende tidspunk", exception.getMessage(), "TC4 - ugyldig (datoForPåfyldning = nu + 10 dage)");
+            assertEquals("Dato for påfyldning må ikke være efter nuværende tidspunk",
+                    exception.getMessage(), "TC4 - ugyldig (datoForPåfyldning = nu + 10 dage)");
         }
     }
 
     @org.junit.jupiter.api.Test
     void createPåfyldtMængder() {
-        var fad = Controller.createFad(0.5, "Testleverandør", "Eg", false);
+        var fad = Controller.createFad(0.5, "Testleverandør", "Eg", 2, hylde);
         var destillat = Controller.createDestillat(LocalDateTime.now(), fad);
         var batch = Controller.createBatch("TestBatch", 30, 0.6);
 
@@ -122,9 +128,6 @@ class ControllerTest {
 
     @org.junit.jupiter.api.Test
     void createFad() {
-        Lager lager = new Lager("Test Lager");
-        Reol reol = lager.createReol("Test reol");
-        Hylde hylde = reol.createHylde("Test hylde");
         // TC1 - grænseværdi (0.0 liter)
         {
             double størrelseLiter = 0.5;
