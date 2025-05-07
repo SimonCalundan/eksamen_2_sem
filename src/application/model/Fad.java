@@ -7,24 +7,27 @@ public class Fad implements Serializable {
     private int nr;
     private double størrelseLiter;
     private Destillat destillat;
-    private boolean erGenbrugt;
+    private int brugtGange;
     private String træsort;
     private String leverandør;
+    private Hylde hylde;
 
     /**
      * Pre: størrelseLiter > 0
      * @param størrelseLiter
      * @param leverandør
      * @param træsort
-     * @param erGenbrugt
+     * @param brugtGange
+     * @param hylde
      */
-    public Fad(double størrelseLiter, String leverandør, String træsort, boolean erGenbrugt) {
+    public Fad(double størrelseLiter, String leverandør, String træsort, int brugtGange, Hylde hylde) {
         this.nr = nextNr++;
         this.størrelseLiter = størrelseLiter;
         this.leverandør = leverandør;
         this.træsort = træsort;
-        this.erGenbrugt = erGenbrugt;
+        this.brugtGange = brugtGange;
         this.destillat = null;
+        this.hylde = hylde;
     }
 
     public int getNr() {
@@ -39,8 +42,8 @@ public class Fad implements Serializable {
         return destillat;
     }
 
-    public boolean erGenbrugt() {
-        return erGenbrugt;
+    public int getBrugtGange() {
+        return brugtGange;
     }
 
     public String getTræsort() {
@@ -51,10 +54,24 @@ public class Fad implements Serializable {
         return leverandør;
     }
 
+    public Hylde getHylde() {
+        return hylde;
+    }
+
+    public void setHylde(Hylde hylde) {
+        if (this.hylde != hylde)    {
+            this.hylde.removeFad(this);
+        }
+        this.hylde = hylde;
+        if (hylde != null)  {
+            hylde.addFad(this);
+        }
+    }
+
     @Override
     public String toString() {
-        return "%d, %.2f, %s, %b, %s, %s"
-                .formatted(nr, størrelseLiter, (getDestillat() == null ? "intet destillat" : getDestillat().getId()), erGenbrugt,
+        return "%d, %.2f, %s, %s, %s, %s, %s"
+                .formatted(nr, størrelseLiter, (getDestillat() == null ? "intet destillat" : getDestillat().getId()), "gange brugt: " + brugtGange, hylde,
                         træsort, leverandør);
     }
 

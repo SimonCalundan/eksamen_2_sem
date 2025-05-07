@@ -10,11 +10,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ControllerTest {
     private static Storage storage;
+    private static Lager lager;
+    private static Reol reol;
+    private static Hylde hylde;
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
         storage = new ListStorage();
         Controller.setStorage(storage);
+
+        lager = Controller.createLager("Lager Lars");
+        reol = Controller.createReol(lager, "fadreol 01");
+        hylde = Controller.createHylde(reol, "fadhylde 01");
     }
 
     @org.junit.jupiter.api.Test
@@ -68,7 +75,6 @@ class ControllerTest {
         {
             double mængdePåfyldt = 0.1;
             var pmFromCreation = Controller.createPåfyldtMængde(destillat, batch, mængdePåfyldt);
-
             PåfyldtMængde pmFromDestillat = destillat.getPåfyldteMængder().getLast();
 
             assertAll("TC1 - grænseværdi",
@@ -116,21 +122,26 @@ class ControllerTest {
 
     @org.junit.jupiter.api.Test
     void createFad() {
+        Lager lager = new Lager("Test Lager");
+        Reol reol = lager.createReol("Test reol");
+        Hylde hylde = reol.createHylde("Test hylde");
         // TC1 - grænseværdi (0.0 liter)
         {
             double størrelseLiter = 0.5;
             String leverandør = "TestLeverandør1";
             String træsort = "Eg";
-            boolean erGenbrugt = false;
+            int brugtGange = 2;
 
-            Controller.createFad(størrelseLiter, leverandør, træsort, erGenbrugt);
+
+            Controller.createFad(størrelseLiter, leverandør, træsort, brugtGange, hylde);
             Fad fad = Controller.getFade().getLast();
 
             assertAll("TC1 - grænseværdi",
                     () -> assertEquals(størrelseLiter, fad.getStørrelseLiter()),
                     () -> assertEquals(leverandør, fad.getLeverandør()),
                     () -> assertEquals(træsort, fad.getTræsort()),
-                    () -> assertEquals(erGenbrugt, fad.erGenbrugt())
+                    () -> assertEquals(brugtGange, fad.getBrugtGange()),
+                    () -> assertEquals(hylde, fad.getHylde())
             );
         }
 
@@ -139,33 +150,33 @@ class ControllerTest {
             double størrelseLiter = 30.0;
             String leverandør = "TestLeverandør2";
             String træsort = "Eg";
-            boolean erGenbrugt = true;
+            int brugtGange = 2;
 
-            Controller.createFad(størrelseLiter, leverandør, træsort, erGenbrugt);
+            Controller.createFad(størrelseLiter, leverandør, træsort, brugtGange, hylde);
             Fad fad = Controller.getFade().getLast();
-
-            assertAll("TC2 - gyldig værdi",
+            assertAll(
                     () -> assertEquals(størrelseLiter, fad.getStørrelseLiter()),
                     () -> assertEquals(leverandør, fad.getLeverandør()),
                     () -> assertEquals(træsort, fad.getTræsort()),
-                    () -> assertEquals(erGenbrugt, fad.erGenbrugt())
+                    () -> assertEquals(brugtGange, fad.getBrugtGange()),
+                    () -> assertEquals(hylde, fad.getHylde())
             );
         }
-
         // TC3 - ugyldig værdi (-3.1 liter)
         {
             double størrelseLiter = -3.1;
             String leverandør = "TestLeverandør3";
             String træsort = "Eg";
-            boolean erGenbrugt = true;
+            int brugtGange = 2;
 
             Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                Controller.createFad(størrelseLiter, leverandør, træsort, erGenbrugt);
+                Controller.createFad(størrelseLiter, leverandør, træsort, brugtGange, hylde);
             });
 
             assertEquals("størrelseLiter må ikke være mindre end 0", exception.getMessage(), "TC3 - ugyldig værdi");
         }
     }
+
 
     @org.junit.jupiter.api.Test
     void createBatch() {

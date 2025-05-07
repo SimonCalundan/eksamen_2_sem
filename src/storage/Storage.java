@@ -3,6 +3,7 @@ package storage;
 import application.model.Batch;
 import application.model.Destillat;
 import application.model.Fad;
+import application.model.Lager;
 
 import java.util.List;
 
@@ -25,4 +26,7 @@ public interface Storage {
 
     void removeBatch(Batch batch);
 
+    List<Lager> getLagre();
+
+    void addLager(Lager lager);
 }

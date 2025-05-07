@@ -1,9 +1,6 @@
 package application.controller;
 
-import application.model.Batch;
-import application.model.Destillat;
-import application.model.Fad;
-import application.model.PåfyldtMængde;
+import application.model.*;
 import storage.Storage;
 
 import java.time.LocalDateTime;
@@ -57,11 +54,11 @@ public abstract class Controller {
      * @param erGenbrugt om fadet er blevet brugt for
      * @return Det oprettede fad
      */
-    public static Fad createFad(double størrelseLiter, String leverandør, String træsort, boolean erGenbrugt) {
+    public static Fad createFad(double størrelseLiter, String leverandør, String træsort, int brugtGange, Hylde hylde) {
         if (størrelseLiter <= 0) {
             throw new IllegalArgumentException("størrelseLiter må ikke være mindre end 0");
         }
-        var fadToAdd = new Fad(størrelseLiter, leverandør, træsort, erGenbrugt);
+        var fadToAdd = new Fad(størrelseLiter, leverandør, træsort, brugtGange, hylde);
         storage.addFad(fadToAdd);
         return fadToAdd;
     }
@@ -122,5 +119,25 @@ public abstract class Controller {
         return storage.getDestillater();
     }
 
-
+    //Lager
+    public static Lager createLager(String navn)    {
+        var lagerToAdd = new Lager(navn);
+        storage.addLager(lagerToAdd);
+        return lagerToAdd;
+    }
+    public static List<Lager> getLagre()    {
+        return storage.getLagre();
+    }
+    public static Reol createReol(Lager lager, String navn) {
+        return lager.createReol(navn);
+    }
+    public static List<Reol> getReoler(Lager lager) {
+        return lager.getReoler();
+    }
+    public static Hylde createHylde(Reol reol, String navn) {
+        return reol.createHylde(navn);
+    }
+    public static List<Hylde> getHylder(Reol reol)   {
+        return reol.getHylder();
+    }
 }
