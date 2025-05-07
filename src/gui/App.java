@@ -1,37 +1,25 @@
 package gui;
 
 import application.controller.Controller;
+import javafx.application.Application;
 import storage.ListStorage;
 import storage.Storage;
-
 import java.io.*;
 
-public class App {
+public class App{
     public static void main(String[] args) {
+
+        Application.launch(Main.class);
+
         Storage storage = loadStorage();
         if (storage == null) {
             storage = new ListStorage();
         }
         Controller.setStorage(storage);
-
-        var lager = Controller.createLager("Lager Lars");
-        var reol = Controller.createReol(lager, "fadreol 01");
-        var hylde = Controller.createHylde(reol, "fadhylde 01");
-        var b1 = Controller.createBatch("Test", 2.2,0.40);
-        var b2 = Controller.createBatch("Bøv", 9.2,0.10);
-        var b3 = Controller.createBatch("Bæv", 3.2,0.90);
-        var f1 = Controller.createFad(2.2, "Søren", "Eg", 0, hylde);
-
-
-        System.out.println("=================");
-        System.out.println("Batches");
-        Controller.getBatches().forEach(System.out::println);
-        System.out.println("=================");
-        System.out.println("Fade");
-        Controller.getFade().forEach(System.out::println);
-        System.out.println("=================");
         saveStorage(storage);
     }
+
+
 
 
     public static Storage loadStorage() {
