@@ -1,11 +1,11 @@
 package application.controller;
 
 import application.model.*;
+import org.junit.jupiter.api.Test;
 import storage.ListStorage;
 import storage.Storage;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,83 +26,235 @@ class ControllerTest {
     }
 
     @org.junit.jupiter.api.Test
-    void getDestillater() {
-        fail();
+    void createDestillat() {
+        // TC1 - grænseværdi (dato = nu)
+        {
+            var datoForPåfyldning = LocalDateTime.now();
+            var fad = Controller.createFad(0.5, "Testleverandør",
+                    "Eg", 2, hylde);
+            Controller.createDestillat(datoForPåfyldning, fad);
+            var destillat = Controller.getDestillater().getLast();
+            assertAll("TC1 - grænseværdi",
+                    () -> assertEquals(datoForPåfyldning, destillat.getDatoForPåfyldning()),
+                    () -> assertEquals(fad, destillat.getFad()));
+        }
+        // TC2 - gyldig
+        {
+            var datoForPåfyldning = LocalDateTime.of(2025, 5,
+                    6, 11, 50);
+            var fad = Controller.createFad(0.5, "Testleverandør",
+                    "Eg", 2, hylde);
+            Controller.createDestillat(datoForPåfyldning, fad);
+            var destillat = Controller.getDestillater().getLast();
+            assertAll("TC2 - gyldig",
+                    () -> assertEquals(datoForPåfyldning, destillat.getDatoForPåfyldning()),
+                    () -> assertEquals(fad, destillat.getFad()));
+        }
+        // TC3 - ugyldig (Fad = null)
+        {
+            var datoForPåfyldning = LocalDateTime.of(2025, 5,
+                    6, 11, 50);
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                Controller.createDestillat(datoForPåfyldning, null);
+            });
+            assertEquals("Fad må ikke være null", exception.getMessage(), "TC3 - ugyldig (Fad = null)");
+        }
+        // TC4 - ugyldig (datoForPåfyldning = nu + 10 dage)
+        {
+            var datoForPåfyldning = LocalDateTime.now().plusDays(10);
+            var fad = Controller.createFad(0.5, "Testleverandør",
+                    "Eg", 2, hylde);
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                Controller.createDestillat(datoForPåfyldning, fad);
+            });
+            assertEquals("Dato for påfyldning må ikke være efter nuværende tidspunk",
+                    exception.getMessage(), "TC4 - ugyldig (datoForPåfyldning = nu + 10 dage)");
+        }
     }
 
     @org.junit.jupiter.api.Test
-    void registrerPåfyldning() {
-        fail();
-    }
+    void createPåfyldtMængder() {
+        var fad = Controller.createFad(0.5, "Testleverandør", "Eg", 2, hylde);
+        var destillat = Controller.createDestillat(LocalDateTime.now(), fad);
+        var batch = Controller.createBatch("TestBatch", 30, 0.6);
 
-    @org.junit.jupiter.api.Test
-    void removeDestillat() {
-        fail();
-    }
+        // TC1 - grænseværdi (mængdePåfyldt = 0.1)
+        {
+            double mængdePåfyldt = 0.1;
+            var pmFromCreation = Controller.createPåfyldtMængde(destillat, batch, mængdePåfyldt);
+            PåfyldtMængde pmFromDestillat = destillat.getPåfyldteMængder().getLast();
 
-    @org.junit.jupiter.api.Test
-    void getLager() {
+            assertAll("TC1 - grænseværdi",
+                    () -> assertTrue(destillat.getPåfyldteMængder().contains(pmFromCreation)),
+                    () -> assertEquals(mængdePåfyldt, pmFromDestillat.getMængdeILiter()),
+                    () -> assertEquals(batch, pmFromDestillat.getBatch()));
+        }
+        // TC2 - gyldig
+        {
+            double mængdePåfyldt = 11.5;
+            var pmFromCreation = Controller.createPåfyldtMængde(destillat, batch, mængdePåfyldt);
 
-    }
+            PåfyldtMængde pmFromDestillat = destillat.getPåfyldteMængder().getLast();
 
-    @org.junit.jupiter.api.Test
-    void getFade() {
-        Controller.createFad(2.2, "Per", "Eg", 1, hylde);
-        assertFalse(Controller.getFade().isEmpty());
+            assertAll("TC1 - grænseværdi",
+                    () -> assertTrue(destillat.getPåfyldteMængder().contains(pmFromCreation)),
+                    () -> assertEquals(mængdePåfyldt, pmFromDestillat.getMængdeILiter()),
+                    () -> assertEquals(batch, pmFromDestillat.getBatch()));
+        }
+        // TC3 - ugyldig (mængdePåfyldt = -3.5)
+        {
+            double mængdePåfyldt = -3.5;
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                Controller.createPåfyldtMængde(destillat, batch, mængdePåfyldt);
+            });
+            assertEquals("mængdePåfyldt skal være større end 0", exception.getMessage(), "TC3 - ugyldig (mængdePåfyldt = -3.5)");
+        }
+        // TC4 - ugyldig (destillat = null)
+        {
+            double mængdePåfyldt = 15.0;
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                Controller.createPåfyldtMængde(null, batch, mængdePåfyldt);
+            });
+            assertEquals("Destillat må ikke være null", exception.getMessage(), "TC4 - ugyldig (destillat = null)");
+        }
+        // TC5 - ugyldig (batch = null)
+        {
+            double mængdePåfyldt = 15.0;
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                Controller.createPåfyldtMængde(destillat, null, mængdePåfyldt);
+            });
+            assertEquals("Batch må ikke være null", exception.getMessage(), "TC5 - ugyldig (batch = null)");
+        }
     }
 
     @org.junit.jupiter.api.Test
     void createFad() {
-        double størrelseLiter = 2.2;
-        String leverandør = "Per";
-        String træsort = "Eg";
-        int gangeBrugt = 1;
-        Controller.createFad(størrelseLiter, leverandør, træsort, gangeBrugt, hylde);
+        // TC1 - grænseværdi (0.0 liter)
+        {
+            double størrelseLiter = 0.5;
+            String leverandør = "TestLeverandør1";
+            String træsort = "Eg";
+            int brugtGange = 2;
 
-        Fad fad = Controller.getFade().getFirst();
 
-        assertAll(
-                () -> assertEquals(størrelseLiter, fad.getStørrelseLiter()),
-                () -> assertEquals(leverandør, fad.getLeverandør()),
-                () -> assertEquals(træsort, fad.getTræsort()),
-                () -> assertEquals(gangeBrugt, fad.getBrugtGange())
-        );
+            Controller.createFad(størrelseLiter, leverandør, træsort, brugtGange, hylde);
+            Fad fad = Controller.getFade().getLast();
+
+            assertAll("TC1 - grænseværdi",
+                    () -> assertEquals(størrelseLiter, fad.getStørrelseLiter()),
+                    () -> assertEquals(leverandør, fad.getLeverandør()),
+                    () -> assertEquals(træsort, fad.getTræsort()),
+                    () -> assertEquals(brugtGange, fad.getBrugtGange()),
+                    () -> assertEquals(hylde, fad.getHylde())
+            );
+        }
+
+        // TC2 - gyldig værdi (30.0 liter)
+        {
+            double størrelseLiter = 30.0;
+            String leverandør = "TestLeverandør2";
+            String træsort = "Eg";
+            int brugtGange = 2;
+
+            Controller.createFad(størrelseLiter, leverandør, træsort, brugtGange, hylde);
+            Fad fad = Controller.getFade().getLast();
+            assertAll(
+                    () -> assertEquals(størrelseLiter, fad.getStørrelseLiter()),
+                    () -> assertEquals(leverandør, fad.getLeverandør()),
+                    () -> assertEquals(træsort, fad.getTræsort()),
+                    () -> assertEquals(brugtGange, fad.getBrugtGange()),
+                    () -> assertEquals(hylde, fad.getHylde())
+            );
+        }
+        // TC3 - ugyldig værdi (-3.1 liter)
+        {
+            double størrelseLiter = -3.1;
+            String leverandør = "TestLeverandør3";
+            String træsort = "Eg";
+            int brugtGange = 2;
+
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                Controller.createFad(størrelseLiter, leverandør, træsort, brugtGange, hylde);
+            });
+
+            assertEquals("størrelseLiter må ikke være mindre end 0", exception.getMessage(), "TC3 - ugyldig værdi");
+        }
     }
 
-    @org.junit.jupiter.api.Test
-    void removeFad() {
-        Fad fad = Controller.createFad(2.2, "Per", "Eg", 1, hylde);
-        assertFalse(Controller.getFade().isEmpty());
-        Controller.removeFad(fad);
-        assertTrue(Controller.getFade().isEmpty());
-    }
-
-    @org.junit.jupiter.api.Test
-    void getBatches() {
-        Controller.createBatch("Testnavn", 2.5, 0.8);
-        assertFalse(Controller.getBatches().isEmpty());
-    }
 
     @org.junit.jupiter.api.Test
     void createBatch() {
-        String navn = "Testnavn";
-        double mængdeLiter = 2.5;
-        double alkoholProcent = 0.10;
-        Controller.createBatch(navn, mængdeLiter, alkoholProcent);
-
-        Batch batch = Controller.getBatches().getFirst();
-
-        assertAll(
-                () -> assertEquals(navn, batch.getNavn()),
-                () -> assertEquals(mængdeLiter, batch.getMængdeLiter())
-        );
+        // TC1 - grænseværdi (mængdeLiter = 0.5)
+        {
+            String navn = "TestBatch";
+            double mængdeLiter = 0.5;
+            double alkoholProcent = 0.10;
+            Controller.createBatch(navn, mængdeLiter, alkoholProcent);
+            Batch batch = Controller.getBatches().getLast();
+            assertAll(
+                    () -> assertEquals(navn, batch.getNavn()),
+                    () -> assertEquals(mængdeLiter, batch.getMængdeLiter())
+            );
+        }
+        // TC2 - almen input
+        {
+            String navn = "TestBatch";
+            double mængdeLiter = 12.0;
+            double alkoholProcent = 0.6;
+            Controller.createBatch(navn, mængdeLiter, alkoholProcent);
+            Batch batch = Controller.getBatches().getLast();
+            assertAll(
+                    () -> assertEquals(navn, batch.getNavn()),
+                    () -> assertEquals(mængdeLiter, batch.getMængdeLiter())
+            );
+        }
+        // TC3 - grænseværdi (alkoholProcent = 0)
+        {
+            String navn = "TestBatch";
+            double mængdeLiter = 12.0;
+            double alkoholProcent = 0;
+            Controller.createBatch(navn, mængdeLiter, alkoholProcent);
+            Batch batch = Controller.getBatches().getLast();
+            assertAll(
+                    () -> assertEquals(navn, batch.getNavn()),
+                    () -> assertEquals(mængdeLiter, batch.getMængdeLiter())
+            );
+        }
+        // TC4 - ugyldig værdi (mængdeLiter = -3.1)
+        {
+            String navn = "TestBatch";
+            double mængdeLiter = -3.1;
+            double alkoholProcent = 0.6;
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                Controller.createBatch(navn, mængdeLiter, alkoholProcent);
+            });
+            assertEquals("mængdeLiter må ikke være mindre en 0", exception.getMessage(), "TC4 - ugyldig værdi (mængdeLiter = -3.1)");
+        }
+        // TC5 - ugyldig værdi (alkoholProcent = -0.3)
+        {
+            String navn = "TestBatch";
+            double mængdeLiter = 10.5;
+            double alkoholProcent = -0.3;
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                Controller.createBatch(navn, mængdeLiter, alkoholProcent);
+            });
+            assertEquals("alkoholProcent må ikke være mindre en 0 eller større end 1", exception.getMessage(), "TC4 - ugyldig værdi (mængdeLiter = -3.1)");
+        }
     }
 
-    @org.junit.jupiter.api.Test
-    void removeBatch() {
-        Batch batch = Controller.createBatch("Testnavn", 2.5, 0.42);
-        assertFalse(Controller.getBatches().isEmpty());
-        Controller.removeBatch(batch);
-        assertTrue(Controller.getBatches().isEmpty());
+    @Test
+    void flytFadTilNyPlacering() {
+        Lager nyLager = Controller.createLager("Lager Lars");
+        Reol nyReol = Controller.createReol(nyLager, "fadreol 01");
+        Hylde nyHylde = Controller.createHylde(nyReol, "fadhylde 01");
+
+        var fad = Controller.createFad(10.5, "Test leverandør", "Eg", 3, hylde);
+        assertEquals(hylde, fad.getHylde());
+
+        Controller.flytFadTilNyPlacering(fad, nyHylde);
+        assertEquals(nyHylde, fad.getHylde());
+        assertNotEquals(hylde, fad.getHylde());
+
+
     }
 }

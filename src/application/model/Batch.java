@@ -7,6 +7,12 @@ public class Batch implements Serializable {
     private double mængdeLiter;
     private double alkoholProcent;
 
+    /**
+     * Pre: mængdeLiter > 0 og  1 > alkoholProcent > 0
+     * @param navn
+     * @param mængdeLiter
+     * @param alkoholProcent
+     */
     public Batch(String navn, double mængdeLiter, double alkoholProcent) {
         this.navn = navn;
         this.mængdeLiter = mængdeLiter;
