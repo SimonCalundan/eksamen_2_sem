@@ -12,6 +12,8 @@ public class Destillat implements Serializable {
     private LocalDateTime datoForPåfyldning;
     private Fad fad;
     private final List<PåfyldtMængde> påfyldteMængder = new ArrayList<>();
+    private double faktiskAlkoholProcent;
+    private double faktiskMængdeLiter;
 
     /**
      * Pre: datoForPåfyldning er ikke efter i dag og Fad er ikke null
@@ -31,6 +33,16 @@ public class Destillat implements Serializable {
 
     public LocalDateTime getDatoForPåfyldning() {
         return datoForPåfyldning;
+    }
+
+    public double getFaktiskMængdeLiter()   {
+        return faktiskMængdeLiter;
+    }
+    public void tapMængdeLiter(double mængdeLiter) {
+        this.faktiskMængdeLiter -= mængdeLiter;
+    }
+    public double getFaktiskAlkoholProcent() {
+        return faktiskAlkoholProcent;
     }
 
     @Override
@@ -57,6 +69,12 @@ public class Destillat implements Serializable {
     public PåfyldtMængde createPåfyldtMængde(double mængdeILiter, Batch batch) {
         PåfyldtMængde påfyldning = new PåfyldtMængde(mængdeILiter, batch);
         påfyldteMængder.add(påfyldning);
+
+        double totalAlkoholMængde = faktiskMængdeLiter * faktiskAlkoholProcent + påfyldning.getMængdeILiter() * påfyldning.getBatch().getAlkoholProcent();
+        faktiskMængdeLiter += påfyldning.getMængdeILiter();
+        faktiskAlkoholProcent += totalAlkoholMængde / faktiskMængdeLiter;
+
+
         return påfyldning;
     }
 
