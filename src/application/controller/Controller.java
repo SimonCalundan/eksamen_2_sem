@@ -232,4 +232,30 @@ public abstract class Controller {
     public static List<Hylde> getHylder(Reol reol) {
         return reol.getHylder();
     }
+
+    //FærdigProdukt
+    public static FærdigProdukt createFærdigProdukt(String navn, ProduktVariant type, double vandMængde)    {
+        var færdigProduktToAdd = new FærdigProdukt(navn, type, vandMængde);
+        storage.addFærdigProdukt(færdigProduktToAdd);
+        return færdigProduktToAdd;
+    }
+    public static List<FærdigProdukt> getFærdigProdukter()  {
+        return storage.getFærdigProdukter();
+    }
+
+    //TappetMængde
+    public static TappetMængde tapMængdeTilFærdigProdukt(double mængdeLiter, Destillat destillat, FærdigProdukt færdigProdukt) {
+
+        if (mængdeLiter > destillat.getFaktiskMængdeLiter())    {
+            throw new RuntimeException("MængdeLiter er større end den totale mægnde væske i destillat");
+        }
+
+        var tappetMængdeToAdd = færdigProdukt.createTappetMængde(mængdeLiter, destillat);
+        tappetMængdeToAdd.getDestillat().tapMængdeLiter(mængdeLiter);
+
+        return tappetMængdeToAdd;
+    }
+    public static List<TappetMængde> getTappetMængder(FærdigProdukt færdigProdukt)  {
+        return færdigProdukt.getTappetmængder();
+    }
 }
