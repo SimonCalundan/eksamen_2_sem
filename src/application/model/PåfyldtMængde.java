@@ -22,4 +22,7 @@ public class PåfyldtMængde {
     public double getMængdeILiter() {
         return mængdeILiter;
     }
+    public void setMængdeILiter(double mængde)  {
+        mængdeILiter = mængde;
+    }
 }

@@ -1,9 +1,6 @@
 package storage;
 
-import application.model.Batch;
-import application.model.Destillat;
-import application.model.Fad;
-import application.model.Lager;
+import application.model.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,12 +12,14 @@ public class ListStorage implements Storage, Serializable {
     private final List<Fad> fade;
     private final List<Batch> batches;
     private final List<Lager> lagre;
+    private final List<FærdigProdukt> færdigProdukter;
 
     public ListStorage() {
         this.destillater = new ArrayList<>();
         this.fade = new ArrayList<>();
         this.batches = new ArrayList<>();
         this.lagre = new ArrayList<>();
+        this.færdigProdukter = new ArrayList<>();
     }
 
     @Override
@@ -77,5 +76,15 @@ public class ListStorage implements Storage, Serializable {
     @Override
     public void addLager(Lager lager)  {
         lagre.add(lager);
+    }
+
+    @Override
+    public List<FærdigProdukt> getFærdigProdukter() {
+        return new ArrayList<>(færdigProdukter);
+    }
+
+    @Override
+    public void addFærdigProdukt(FærdigProdukt færdigProdukt) {
+        færdigProdukter.add(færdigProdukt);
     }
 }
