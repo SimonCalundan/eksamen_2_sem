@@ -20,17 +20,23 @@ public abstract class Controller {
 
     /**
      * Opretter og gemmer et nyt batch
-     * @param navn navnet på det oprettede batch
-     * @param mængdeILiter hvor mange liter er batchet
+     *
+     * @param navn           navnet på det oprettede batch
+     * @param mængdeILiter   hvor mange liter er batchet
      * @param alkoholProcent batchests alkoholprocent. Skal være en værdi mellem 0 og 1
      * @return det oprettede batch
+     * @throws IllegalArgumentException hvis mængdeILiter er mindre eller lig med 0,
+     *                                  alkoholProcent ikke er mellem 0 og 1 eller hvis navn input er tomt
      */
-    public static Batch createBatch(String navn, double mængdeILiter, double alkoholProcent) {
+    public static Batch createBatch(String navn, double mængdeILiter, double alkoholProcent) throws IllegalArgumentException {
         if (mængdeILiter <= 0) {
             throw new IllegalArgumentException("mængdeLiter må ikke være mindre en 0");
         }
         if (alkoholProcent < 0 || alkoholProcent > 1) {
             throw new IllegalArgumentException("alkoholProcent må ikke være mindre en 0 eller større end 1");
+        }
+        if (navn.isBlank()) {
+            throw new IllegalArgumentException("Navn må ikke være tomt");
         }
         var batchToAdd = new Batch(navn, mængdeILiter, alkoholProcent);
         storage.addBatch(batchToAdd);
@@ -49,24 +55,46 @@ public abstract class Controller {
     /**
      * Flytter et fad til en anden hylde. Kan godt være en hylde tilhørende
      * en reol på et andet lager
-     * @param fad fadet man ønsker flyttet
+     *
+     * @param fad   fadet man ønsker flyttet
      * @param hylde den nye hylde fadet flyttes til
+     * @throws IllegalArgumentException hvis fad eller hylde er null
+     *
      */
-    public static void flytFadTilNyPlacering(Fad fad, Hylde hylde){
+    public static void flytFadTilNyPlacering(Fad fad, Hylde hylde) throws IllegalArgumentException {
+        if (fad == null || hylde == null){
+            throw new IllegalArgumentException(
+                    "Et fad og en hylde skal være valgt for en flytning"
+            );
+        }
         fad.setHylde(hylde);
     }
 
     /**
      * Opretter og gemmer et nyt fad i systemet
+     *
      * @param størrelseLiter fadets kapacitet
-     * @param leverandør fadets leverandør
-     * @param træsort den træsort fadet er lavet af
-     * @param erGenbrugt om fadet er blevet brugt for
-     * @return Det oprettede fad
+     * @param leverandør     fadets leverandør
+     * @param træsort        den træsort fadet er lavet af
+     * @param brugtGange     hvor mange gange fadet er blevet brugt før
+     * @param hylde          den hylde fadet skal stå på. Bemærk: dette kan ændres senere
+     * @return det oprettede fad
+     * @throws IllegalArgumentException hvis størrelseLiter er mindre eller ligmed 0,
+     *                                  leverandør eller træsort er tomt, brugtgange er < 0 eller hvis hylde er null
      */
-    public static Fad createFad(double størrelseLiter, String leverandør, String træsort, int brugtGange, Hylde hylde) {
+    public static Fad createFad(double størrelseLiter, String leverandør, String træsort,
+                                int brugtGange, Hylde hylde) throws IllegalArgumentException {
         if (størrelseLiter <= 0) {
             throw new IllegalArgumentException("størrelseLiter må ikke være mindre end 0");
+        }
+        if (leverandør.isBlank() || træsort.isBlank()) {
+            throw new IllegalArgumentException("Leverandør og træsort skal være angivet");
+        }
+        if (brugtGange < 0) {
+            throw new IllegalArgumentException("Et fad kan ikke være brugt mindre end 0 gange");
+        }
+        if (hylde == null) {
+            throw new IllegalArgumentException("Hylde må ikke være null");
         }
         var fadToAdd = new Fad(størrelseLiter, leverandør, træsort, brugtGange, hylde);
         storage.addFad(fadToAdd);
@@ -81,11 +109,15 @@ public abstract class Controller {
 
     /**
      * Opretter et Destillat objekt
+     *
      * @param datoForPåfyldning Tidspunktet hvor påfyldningen fandt sted
-     * @param fad det fad som destillatet skal være på
+     * @param fad               det fad som destillatet skal være på
      * @return Destillat objektet som oprettes
+     * @throws IllegalArgumentException hvis dateForPåfyldning er efter nuværende tidspunkt
+     *                                  eller at Fad er null
      */
-    public static Destillat createDestillat(LocalDateTime datoForPåfyldning, Fad fad) {
+    public static Destillat createDestillat(LocalDateTime datoForPåfyldning, Fad fad)
+            throws IllegalArgumentException {
         if (datoForPåfyldning.isAfter(LocalDateTime.now())) {
             throw new IllegalArgumentException("Dato for påfyldning må ikke være efter nuværende tidspunk");
         }
@@ -99,13 +131,18 @@ public abstract class Controller {
 
     /**
      * Fylder en given mængde af et batch til et destillat
-     * @param destillat det destillat som batches hældes på
-     * @param batch det batch der ønskes at tappes fra
+     *
+     * @param destillat     det destillat som batches hældes på
+     * @param batch         det batch der ønskes at tappes fra
      * @param mængdePåfyldt hvor meget der ønkes at tappes af batchet
      * @return PåfyldtMængde objekt
+     * @throws IllegalArgumentException hvis batch er null, mængdePåfyldt er under 0
+     *                                  eller hvis destillat er 0
+     * @throws IllegalStateException    hvis mængdePåfyldt er for meget ift batchets total mængde
      */
-    public static PåfyldtMængde createPåfyldtMængde(Destillat destillat, Batch batch, double mængdePåfyldt) {
-        if (batch == null){
+    public static PåfyldtMængde createPåfyldtMængde(Destillat destillat, Batch batch, double mængdePåfyldt)
+            throws IllegalArgumentException, IllegalStateException {
+        if (batch == null) {
             throw new IllegalArgumentException("Batch må ikke være null");
         }
         if (batch.getMængdeLiter() - mængdePåfyldt < 0) {
@@ -130,24 +167,69 @@ public abstract class Controller {
     }
 
     //Lager
-    public static Lager createLager(String navn)    {
+
+    /**
+     * Opretter og gemmer et nyt lager i systemet
+     *
+     * @param navn en ikke unik identifier
+     * @return Lager objektet
+     * @throws IllegalArgumentException hvis navnet er tomt
+     */
+    public static Lager createLager(String navn) throws IllegalArgumentException {
+        if (navn.isBlank()) {
+            throw new IllegalArgumentException("Navn skal være angivet");
+        }
         var lagerToAdd = new Lager(navn);
         storage.addLager(lagerToAdd);
         return lagerToAdd;
     }
-    public static List<Lager> getLagre()    {
+
+    public static List<Lager> getLagre() {
         return storage.getLagre();
     }
-    public static Reol createReol(Lager lager, String navn) {
+
+
+    /**
+     * Opretter og gemmer en ny reol i systemet ud fra et lager
+     *
+     * @param lager det lager som reolen skal oprettes i
+     * @param navn  en ikke unik identifier
+     * @return Reol objektet
+     * @throws IllegalArgumentException hvis lager er null eller navn er tomt
+     */
+    public static Reol createReol(Lager lager, String navn) throws IllegalArgumentException {
+        if (lager == null) {
+            throw new IllegalArgumentException("Lager må ikke være null");
+        }
+        if (navn.isBlank()) {
+            throw new IllegalArgumentException("Navn skal være angivet");
+        }
         return lager.createReol(navn);
     }
+
     public static List<Reol> getReoler(Lager lager) {
         return lager.getReoler();
     }
-    public static Hylde createHylde(Reol reol, String navn) {
+
+    /**
+     * Opretter og gemmer en ny hylde i systemet
+     *
+     * @param reol den tilkyttede reol som hylden oprettes på
+     * @param navn en ikke unik identifier for hylden
+     * @return Hylde objektet
+     * @throws IllegalArgumentException hvis reol er null eller navn er tomt
+     */
+    public static Hylde createHylde(Reol reol, String navn) throws IllegalArgumentException {
+        if (reol == null) {
+            throw new IllegalArgumentException("Lager må ikke være null");
+        }
+        if (navn.isBlank()) {
+            throw new IllegalArgumentException("Navn skal være angivet");
+        }
         return reol.createHylde(navn);
     }
-    public static List<Hylde> getHylder(Reol reol)   {
+
+    public static List<Hylde> getHylder(Reol reol) {
         return reol.getHylder();
     }
 }
