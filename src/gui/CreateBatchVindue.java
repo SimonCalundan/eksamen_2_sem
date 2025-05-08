@@ -57,19 +57,6 @@ public class CreateBatchVindue extends Stage {
             double mængdeILiter;
             double alkoholProcent;
 
-            if (txfNavn.getText().trim().isEmpty()) {
-                title = "Fejl i tekstfeltet navn";
-                contentText = "Giv batchet et navn";
-                throw new IllegalArgumentException();
-            } else if (txfMængdeILiter.getText().trim().isEmpty()) {
-                title = "Fejl i tekstfeltet mængde i liter";
-                contentText = "Giv batchet en mængde i liter";
-                throw new IllegalArgumentException();
-            } else if (txfAlkoholProcent.getText().trim().isEmpty()) {
-                title = "Fejl i tekstfeltet alkoholprocent";
-                contentText = "Giv batchet en alkoholprocent";
-                throw new IllegalArgumentException();
-            }
             mængdeILiter = Double.parseDouble(txfMængdeILiter.getText().trim());
             alkoholProcent = Double.parseDouble(txfAlkoholProcent.getText().trim());
             Controller.createBatch(navn,mængdeILiter,alkoholProcent);
@@ -77,6 +64,8 @@ public class CreateBatchVindue extends Stage {
         } catch (NumberFormatException e) {
             showAlert("Forkert tal input", "Du skal skrive et tal i alkoholprocent og mængde", "Det kan ikke være under 0");
         } catch (IllegalArgumentException e) {
+            showAlert("Opret batch", "Fejl under opret batch", e.getMessage());
+        } catch (RuntimeException e) {
             showAlert(title, headerText,contentText);
         }
     }
