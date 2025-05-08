@@ -9,18 +9,14 @@ import java.io.*;
 public class App{
     public static void main(String[] args) {
 
-        Application.launch(Main.class);
-
         Storage storage = loadStorage();
         if (storage == null) {
             storage = new ListStorage();
         }
         Controller.setStorage(storage);
+        Application.launch(Main.class);
         saveStorage(storage);
     }
-
-
-
 
     public static Storage loadStorage() {
         String fileName = "storage.ser";

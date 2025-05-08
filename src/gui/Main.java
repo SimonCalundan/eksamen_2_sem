@@ -13,7 +13,7 @@ public class Main extends Application {
         TabPane tabPane = new TabPane();
 
         // Tilføj tabs fra de respektive klasser
-        Tab produktionTab = new Produktion().getTab();
+        Tab produktionTab = new ProduktionTab().getTab();
         Tab fadTab = new Fad().getTab();
         Tab lagerTab = new Lager().getTab();
 
