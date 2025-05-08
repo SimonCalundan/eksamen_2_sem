@@ -47,6 +47,16 @@ public abstract class Controller {
     }
 
     /**
+     * Flytter et fad til en anden hylde. Kan godt være en hylde tilhørende
+     * en reol på et andet lager
+     * @param fad fadet man ønsker flyttet
+     * @param hylde den nye hylde fadet flyttes til
+     */
+    public static void flytFadTilNyPlacering(Fad fad, Hylde hylde){
+        fad.setHylde(hylde);
+    }
+
+    /**
      * Opretter og gemmer et nyt fad i systemet
      * @param størrelseLiter fadets kapacitet
      * @param leverandør fadets leverandør
