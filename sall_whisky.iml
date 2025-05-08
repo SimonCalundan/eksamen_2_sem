@@ -41,5 +41,6 @@
     </orderEntry>
     <orderEntry type="library" name="javafx.21_NY" level="application" />
     <orderEntry type="library" exported="" name="javafx" level="application" />
+    <orderEntry type="library" name="javafx_21" level="application" />
   </component>
 </module>

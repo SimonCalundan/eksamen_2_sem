@@ -1,9 +1,6 @@
 package storage;
 
-import application.model.Batch;
-import application.model.Destillat;
-import application.model.Fad;
-import application.model.Lager;
+import application.model.*;
 
 import java.util.List;
 
@@ -29,4 +26,8 @@ public interface Storage {
     List<Lager> getLagre();
 
     void addLager(Lager lager);
+
+    List<FærdigProdukt> getFærdigProdukter();
+
+    void addFærdigProdukt(FærdigProdukt færdigProdukt);
 }
