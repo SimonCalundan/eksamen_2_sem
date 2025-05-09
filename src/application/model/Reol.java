@@ -18,7 +18,7 @@ public class Reol implements Serializable {
     public Hylde createHylde(String navn)   {
 
         var newHylde = new Hylde(navn, this);
-
+        hylder.add(newHylde);
         return newHylde;
     }
 
