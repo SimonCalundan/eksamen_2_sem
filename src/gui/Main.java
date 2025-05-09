@@ -14,8 +14,8 @@ public class Main extends Application {
 
         // Tilføj tabs fra de respektive klasser
         Tab produktionTab = new Produktion().getTab();
-        Tab fadTab = new Fad().getTab();
-        Tab lagerTab = new Lager().getTab();
+        Tab fadTab = new FadFane().getTab();
+        Tab lagerTab = new LagerFane().getTab();
 
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         tabPane.getTabs().addAll(produktionTab, fadTab, lagerTab);

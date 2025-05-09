@@ -2,6 +2,7 @@ package application.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Hylde implements Serializable {
@@ -27,6 +28,10 @@ public class Hylde implements Serializable {
             fade.remove(fad);
             fad.setHylde(null);
         }
+    }
+
+    public List<Fad> getFade() {
+        return Collections.unmodifiableList(fade);
     }
 
     @Override

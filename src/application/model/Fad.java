@@ -14,6 +14,7 @@ public class Fad implements Serializable {
 
     /**
      * Pre: størrelseLiter > 0
+     *
      * @param størrelseLiter
      * @param leverandør
      * @param træsort
@@ -28,6 +29,7 @@ public class Fad implements Serializable {
         this.brugtGange = brugtGange;
         this.destillat = null;
         this.hylde = hylde;
+        hylde.addFad(this);
     }
 
     public int getNr() {
@@ -59,13 +61,26 @@ public class Fad implements Serializable {
     }
 
     public void setHylde(Hylde hylde) {
-        if (this.hylde != hylde)    {
+        if (this.hylde != hylde) {
             this.hylde.removeFad(this);
         }
         this.hylde = hylde;
-        if (hylde != null)  {
+        if (hylde != null) {
             hylde.addFad(this);
         }
+    }
+
+    public String fadOversigt() {
+        return """
+                Fad nr: %s
+                Størrelse i Liter: %.2f
+                Nuværende destillat: %s
+                Gange brugt: %d
+                Træsort: %s
+                Leverandør: %s
+                """.formatted(nr, størrelseLiter,
+                (getDestillat() == null ? "intet destillat" : getDestillat().getId()),
+                brugtGange, træsort, leverandør);
     }
 
     @Override
