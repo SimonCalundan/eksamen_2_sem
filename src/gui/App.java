@@ -16,7 +16,7 @@ public class App {
             storage = new ListStorage();
         }
         Controller.setStorage(storage);
-//        initStorage();
+        initStorage();
         Application.launch(Main.class);
         saveStorage(storage);
     }

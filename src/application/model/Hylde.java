@@ -34,6 +34,10 @@ public class Hylde implements Serializable {
         return Collections.unmodifiableList(fade);
     }
 
+    public Reol getReol() {
+        return reol;
+    }
+
     @Override
     public String toString() {
         return navn;
