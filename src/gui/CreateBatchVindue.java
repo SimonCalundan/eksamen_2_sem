@@ -17,11 +17,11 @@ public class CreateBatchVindue extends Stage {
     public CreateBatchVindue(String title, Tab tab) {
         this.setTitle(title);
         GridPane grid = new GridPane();
-        grid.setHgap(25);
-        grid.setVgap(25);
-        grid.setPadding(new Insets(20));
+        grid.setHgap(5);
+        grid.setVgap(5);
+        grid.setPadding(new Insets(10));
         grid.setAlignment(Pos.CENTER);
-        grid.setGridLinesVisible(true);
+        grid.setGridLinesVisible(false);
 
         Label lblNavn = new Label("Navn:");
         grid.add(lblNavn,0,0);
@@ -42,37 +42,37 @@ public class CreateBatchVindue extends Stage {
         grid.add(btnCreateBatch,0,3);
         btnCreateBatch.setOnAction(event -> this.createBatch());
 
-        Scene scene = new Scene(grid, 400, 300);
+        Button btnLuk = new Button("Luk");
+        grid.add(btnLuk,1,3);
+        btnLuk.setOnAction(event -> this.closeWindow());
+
+        Scene scene = new Scene(grid, 300, 200);
         this.setScene(scene);
     }
 
 
 
     private void createBatch() {
-        String title = "";
-        String headerText = "Du skal udfylde tekstfeltet";
-        String contentText = "";
         try {
             String navn = txfNavn.getText().trim();
             double mængdeILiter;
             double alkoholProcent;
-
             mængdeILiter = Double.parseDouble(txfMængdeILiter.getText().trim());
             alkoholProcent = Double.parseDouble(txfAlkoholProcent.getText().trim());
             Controller.createBatch(navn,mængdeILiter,alkoholProcent);
+            closeWindow();
             hide();
         } catch (NumberFormatException e) {
-            showAlert("Forkert tal input", "Du skal skrive et tal i alkoholprocent og mængde", "Det kan ikke være under 0");
-        } catch (IllegalArgumentException e) {
-            showAlert("Opret batch", "Fejl under opret batch", e.getMessage());
-        } catch (RuntimeException e) {
-            showAlert(title, headerText,contentText);
+            showAlert("Fejl under opret batch", "Forkert tal input");
+        } catch
+         (Exception e) {
+            showAlert("Fejl under opret batch", e.getMessage());
         }
     }
 
-    private void showAlert(String title, String headerText, String contentText) {
+    private void showAlert(String headerText, String contentText) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
+        alert.setTitle("Fejl");
         alert.setHeaderText(headerText);
         alert.setContentText(contentText);
         alert.showAndWait();

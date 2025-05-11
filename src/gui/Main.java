@@ -13,8 +13,8 @@ public class Main extends Application {
         TabPane tabPane = new TabPane();
 
         // Tilføj tabs fra de respektive klasser
-        Tab produktionTab = new ProduktionTab().getTab();
-        Tab fadTab = new Fad().getTab();
+        Tab produktionTab = new ProduktionFane().getTab();
+        Tab fadTab = new FadFane().getTab();
         Tab lagerTab = new Lager().getTab();
 
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
@@ -31,6 +31,4 @@ public class Main extends Application {
         primaryStage.setTitle("Sall Whisky");
         primaryStage.show();
     }
-
-
 }

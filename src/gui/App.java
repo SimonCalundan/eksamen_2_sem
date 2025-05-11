@@ -1,6 +1,7 @@
 package gui;
 
 import application.controller.Controller;
+import application.model.Batch;
 import javafx.application.Application;
 import storage.ListStorage;
 import storage.Storage;
@@ -46,5 +47,14 @@ public class App{
             System.out.println(ex);
             throw new RuntimeException();
         }
+    }
+
+    public static void intiStorage() {
+        Controller.createBatch("Batch1", 20, 0.5);
+        Controller.createBatch("Batch2", 11, 0.2);
+        Controller.createBatch("Batch3", 14, 0.6);
+        Controller.createBatch("Batch4", 15, 0.7);
+
+
     }
 }
