@@ -32,7 +32,7 @@ public abstract class Controller {
         if (mængdeILiter <= 0) {
             throw new IllegalArgumentException("mængdeLiter må ikke være mindre en 0");
         }
-        if (alkoholProcent < 0 || alkoholProcent > 1) {
+        if (alkoholProcent < 0 || alkoholProcent >= 1) {
             throw new IllegalArgumentException("alkoholProcent må ikke være mindre en 0 eller større end 1");
         }
         if (navn.isBlank()) {

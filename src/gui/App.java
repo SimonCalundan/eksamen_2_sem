@@ -1,6 +1,7 @@
 package gui;
 
 import application.controller.Controller;
+import application.model.Batch;
 import javafx.application.Application;
 import storage.ListStorage;
 import storage.Storage;
@@ -10,17 +11,15 @@ import java.io.*;
 public class App {
     public static void main(String[] args) {
 
-
         Storage storage = loadStorage();
         if (storage == null) {
             storage = new ListStorage();
         }
         Controller.setStorage(storage);
-//        initStorage();
+        initStorage();
         Application.launch(Main.class);
         saveStorage(storage);
     }
-
 
     public static Storage loadStorage() {
         String fileName = "storage.ser";
@@ -90,6 +89,4 @@ public class App {
         // Evt. logning
         System.out.println("Lagre og fade er initialiseret.");
     }
-
-
 }
