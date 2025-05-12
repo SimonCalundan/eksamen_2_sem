@@ -91,14 +91,4 @@ public class ListStorage implements Storage, Serializable {
     public void addFærdigProdukt(FærdigProdukt færdigProdukt) {
         færdigProdukter.add(færdigProdukt);
     }
-
-    @Override
-    public List<DestillatMængde> getDestillatMængde() {
-        return new ArrayList<>(destillatMængder);
-    }
-
-    @Override
-    public void addDestillatMængde(DestillatMængde destillatMængde) {
-        destillatMængder.add(destillatMængde);
-    }
 }

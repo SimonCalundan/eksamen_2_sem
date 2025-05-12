@@ -96,9 +96,6 @@ public class App {
         var destillatD1 = Controller.createDestillat(LocalDateTime.of(2020,6,11,10,30), fadTilD1);
         var destillatD2 = Controller.createDestillat(LocalDateTime.of(2021,5,5,12,12),fadTilD2);
 
-        Controller.createPåfyldtMængde(destillatD1,batch1,10);
-        Controller.createPåfyldtMængde(destillatD2,batch2,40);
-
         // Evt. logning
         System.out.println("Lagre og fade er initialiseret.");
     }
