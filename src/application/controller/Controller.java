@@ -234,6 +234,7 @@ public abstract class Controller {
     }
 
     //FærdigProdukt
+    // TODO skriv docs til denne metode ligesom i andre controller metoder
     public static FærdigProdukt createFærdigProdukt(String navn, ProduktVariant type, double vandMængde)    {
         var færdigProduktToAdd = new FærdigProdukt(navn, type, vandMængde);
         storage.addFærdigProdukt(færdigProduktToAdd);
@@ -244,6 +245,7 @@ public abstract class Controller {
     }
 
     //TappetMængde
+    // TODO skriv docs til denne metode ligesom i andre controller metoder
     public static TappetMængde tapMængdeTilFærdigProdukt(double mængdeLiter, Destillat destillat, FærdigProdukt færdigProdukt) {
 
         if (mængdeLiter > destillat.getFaktiskMængdeLiter())    {

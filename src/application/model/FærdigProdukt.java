@@ -50,4 +50,6 @@ public class FærdigProdukt implements Serializable {
     public List<TappetMængde> getTappetmængder() {
         return new ArrayList<>(tappetmængder);
     }
+
+
 }
