@@ -11,7 +11,7 @@ public class Destillat implements Serializable {
     private int id;
     private LocalDateTime datoForPåfyldning;
     private Fad fad;
-    private final List<PåfyldtMængde> påfyldteMængder = new ArrayList<>();
+    private final List<BatchMængde> påfyldteMængder = new ArrayList<>();
     private double faktiskAlkoholProcent;
     private double faktiskMængdeLiter;
 
@@ -38,9 +38,11 @@ public class Destillat implements Serializable {
     public double getFaktiskMængdeLiter()   {
         return faktiskMængdeLiter;
     }
+
     public void tapMængdeLiter(double mængdeLiter) {
         this.faktiskMængdeLiter -= mængdeLiter;
     }
+
     public double getFaktiskAlkoholProcent() {
         return faktiskAlkoholProcent;
     }
@@ -55,30 +57,21 @@ public class Destillat implements Serializable {
     }
 
     //link metoder
-    public List<PåfyldtMængde> getPåfyldteMængder() {
+    public List<BatchMængde> getPåfyldteMængder() {
         return Collections.unmodifiableList(påfyldteMængder);
     }
 
-    /**
-     * Laver en påfyldt mængde ud fra et givent batch
-     * Pre: Batch er ikke null og mængdeILiter skal være > 0
-     * @param mængdeILiter
-     * @param batch
-     * @return Påfyldtmængde objekt
-     */
-    public PåfyldtMængde createPåfyldtMængde(double mængdeILiter, Batch batch) {
-        PåfyldtMængde påfyldning = new PåfyldtMængde(mængdeILiter, batch);
-        påfyldteMængder.add(påfyldning);
-
-        double totalAlkoholMængde = faktiskMængdeLiter * faktiskAlkoholProcent + påfyldning.getMængdeILiter() * påfyldning.getBatch().getAlkoholProcent();
-        faktiskMængdeLiter += påfyldning.getMængdeILiter();
-        faktiskAlkoholProcent += totalAlkoholMængde / faktiskMængdeLiter;
-
-
-        return påfyldning;
+    public void addPåfyldteMængder(BatchMængde påfyldtMængde) {
+        if (!påfyldteMængder.contains(påfyldtMængde)) {
+            påfyldteMængder.add(påfyldtMængde);
+            //egentlig alkoholprocent og total mængde i liter
+            double totalAlkoholMængde = faktiskMængdeLiter * faktiskAlkoholProcent + påfyldtMængde.getMængdeILiter() * påfyldtMængde.getBatch().getAlkoholProcent();
+            faktiskMængdeLiter += påfyldtMængde.getMængdeILiter();
+            faktiskAlkoholProcent += totalAlkoholMængde / faktiskMængdeLiter;
+        }
     }
 
-    public void removePåfyldtMængde(PåfyldtMængde påfyldning) {
+    public void removePåfyldtMængde(BatchMængde påfyldning) {
         if (påfyldteMængder.contains(påfyldning)) {
             påfyldteMængder.remove(påfyldning);
         }

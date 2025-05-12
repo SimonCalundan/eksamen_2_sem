@@ -13,6 +13,8 @@ public class ListStorage implements Storage, Serializable {
     private final List<Batch> batches;
     private final List<Lager> lagre;
     private final List<FærdigProdukt> færdigProdukter;
+    private final List<DestillatMængde> destillatMængder;
+    private final List<BatchMængde> batchMængder;
 
     public ListStorage() {
         this.destillater = new ArrayList<>();
@@ -20,6 +22,8 @@ public class ListStorage implements Storage, Serializable {
         this.batches = new ArrayList<>();
         this.lagre = new ArrayList<>();
         this.færdigProdukter = new ArrayList<>();
+        this.destillatMængder = new ArrayList<>();
+        this.batchMængder = new ArrayList<>();
     }
 
     @Override
@@ -86,5 +90,15 @@ public class ListStorage implements Storage, Serializable {
     @Override
     public void addFærdigProdukt(FærdigProdukt færdigProdukt) {
         færdigProdukter.add(færdigProdukt);
+    }
+
+    @Override
+    public List<DestillatMængde> getDestillatMængde() {
+        return new ArrayList<>(destillatMængder);
+    }
+
+    @Override
+    public void addDestillatMængde(DestillatMængde destillatMængde) {
+        destillatMængder.add(destillatMængde);
     }
 }

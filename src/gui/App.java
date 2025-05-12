@@ -1,12 +1,12 @@
 package gui;
 
 import application.controller.Controller;
-import application.model.Batch;
 import javafx.application.Application;
 import storage.ListStorage;
 import storage.Storage;
 
 import java.io.*;
+import java.time.LocalDateTime;
 
 public class App {
     public static void main(String[] args) {
@@ -66,8 +66,8 @@ public class App {
         Controller.createFad(225.0, "Mikkel", "Eg", 3, hylde1A);
         Controller.createFad(180.0, "Sara", "Ask", 2, hylde1A);
         Controller.createFad(150.0, "Peter", "Bøg", 1, hylde1B);
-        Controller.createFad(300.0, "Julie", "Valnød", 4, hylde2A);
-        Controller.createFad(275.0, "Thomas", "Eg", 2, hylde2B);
+        var fadTilD2 = Controller.createFad(300.0, "Julie", "Valnød", 4, hylde2A);
+        var fadTilD1 = Controller.createFad(275.0, "Thomas", "Eg", 2, hylde2B);
 
         // Lager 2: Firmaets lager
         var lager2 = Controller.createLager("Nordisk Træfade ApS");
@@ -85,6 +85,19 @@ public class App {
         Controller.createFad(210.0, "Jonas", "Birk", 1, hylde4A);
         Controller.createFad(195.0, "Emilie", "Eg", 3, hylde4B);
         Controller.createFad(400.0, "Niels", "Teak", 6, hylde4B);
+
+        var batch1 = Controller.createBatch("B1/2020",20,0.5);
+        var batch2 = Controller.createBatch("B2/2021",40,0.45);
+        Controller.createBatch("B3/2021",50,0.35);
+        Controller.createBatch("B4/2022",30,0.30);
+        Controller.createBatch("B4/2023",60,0.25);
+        Controller.createBatch("B6/2024",90,0.65);
+
+        var destillatD1 = Controller.createDestillat(LocalDateTime.of(2020,6,11,10,30), fadTilD1);
+        var destillatD2 = Controller.createDestillat(LocalDateTime.of(2021,5,5,12,12),fadTilD2);
+
+        Controller.createPåfyldtMængde(destillatD1,batch1,10);
+        Controller.createPåfyldtMængde(destillatD2,batch2,40);
 
         // Evt. logning
         System.out.println("Lagre og fade er initialiseret.");

@@ -82,7 +82,7 @@ class ControllerTest {
         {
             double mængdePåfyldt = 0.1;
             var pmFromCreation = Controller.createPåfyldtMængde(destillat, batch, mængdePåfyldt);
-            PåfyldtMængde pmFromDestillat = destillat.getPåfyldteMængder().getLast();
+            BatchMængde pmFromDestillat = destillat.getPåfyldteMængder().getLast();
 
             assertAll("TC1 - grænseværdi",
                     () -> assertTrue(destillat.getPåfyldteMængder().contains(pmFromCreation)),
@@ -94,7 +94,7 @@ class ControllerTest {
             double mængdePåfyldt = 11.5;
             var pmFromCreation = Controller.createPåfyldtMængde(destillat, batch, mængdePåfyldt);
 
-            PåfyldtMængde pmFromDestillat = destillat.getPåfyldteMængder().getLast();
+            BatchMængde pmFromDestillat = destillat.getPåfyldteMængder().getLast();
 
             assertAll("TC1 - grænseværdi",
                     () -> assertTrue(destillat.getPåfyldteMængder().contains(pmFromCreation)),
