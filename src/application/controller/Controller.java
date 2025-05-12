@@ -130,17 +130,15 @@ public abstract class Controller {
     }
 
     /**
-     * Fylder en given mængde af et batch til et destillat
+     * Opretter og gemmer en Batchmængde
      *
-     * @param destillat     det destillat som batches hældes på
-     * @param batch         det batch der ønskes at tappes fra
-     * @param mængdePåfyldt hvor meget der ønkes at tappes af batchet
-     * @return PåfyldtMængde objekt
-     * @throws IllegalArgumentException hvis batch er null, mængdePåfyldt er under 0
-     *                                  eller hvis destillat er 0
-     * @throws IllegalStateException    hvis mængdePåfyldt er for meget ift batchets total mængde
+     * @param batch det batch man tapper fra
+     * @param mængdePåfyldt den mængde der tappes fra batches
+     * @return Batchmængde objektet som oprettes
+     * @throws IllegalArgumentException hvis batch er null og hvis mængde man påfydler er <= 0
+     * @throws IllegalStateException hvis batch totalte mængde - den mængde man vil påfylde giver samlet < 0
      */
-    public static PåfyldtMængde createPåfyldtMængde(Destillat destillat, Batch batch, double mængdePåfyldt)
+    public static BatchMængde createBatchMængde(Batch batch, double mængdePåfyldt)
             throws IllegalArgumentException, IllegalStateException {
         if (batch == null) {
             throw new IllegalArgumentException("Batch må ikke være null");
@@ -151,11 +149,9 @@ public abstract class Controller {
         if (mængdePåfyldt <= 0) {
             throw new IllegalArgumentException("mængdePåfyldt skal være større end 0");
         }
-        if (destillat == null) {
-            throw new IllegalArgumentException("Destillat må ikke være null");
-        }
+        var BatchMængdeToBeAdded = new BatchMængde(mængdePåfyldt, batch);
         batch.setMængdeLiter(batch.getMængdeLiter() - mængdePåfyldt);
-        return destillat.createPåfyldtMængde(mængdePåfyldt, batch);
+        return BatchMængdeToBeAdded;
     }
 
     public static void removeDestillat(Destillat destillat) {
@@ -166,8 +162,32 @@ public abstract class Controller {
         return storage.getDestillater();
     }
 
-    //Lager
+    //Destillat mængde
+    /**
+     * Opretter og gemmer destillatmængde
+     *
+     * @param destillat det destillat der skal tappes fra
+     * @param mængdeLiter den mængde der skal tappes fra destillatet
+     * @return destillatMængde objekt
+     * @throws IllegalArgumentException hvis destillat er null
+     * og hvis mængdeLiter <= 0
+     * @throws IllegalStateException hvis destillatets faktiske mængde - mængdeLiter man tapper er mindre end 0
+     */
+    public static DestillatMængde createDestillatMængde(Destillat destillat, double mængdeLiter) throws IllegalArgumentException{
+        if (destillat == null) {
+            throw new IllegalArgumentException("Destillatet kan ikke være null");
+        } if (destillat.getFaktiskMængdeLiter() - mængdeLiter < 0) {
+            throw new IllegalStateException("Der er ikke nok mængde i Destillatet");
+        } if (mængdeLiter <= 0) {
+            throw new IllegalArgumentException("Mængden skal være større end 0");
+        }
+        var DestillatMængdeToAdded = new DestillatMængde(mængdeLiter,destillat);
+        storage.addDestillatMængde(DestillatMængdeToAdded);
+        destillat.tapMængdeLiter(mængdeLiter);
+        return DestillatMængdeToAdded;
+    }
 
+    //Lager
     /**
      * Opretter og gemmer et nyt lager i systemet
      *
@@ -234,28 +254,34 @@ public abstract class Controller {
     }
 
     //FærdigProdukt
-    public static FærdigProdukt createFærdigProdukt(String navn, ProduktVariant type, double vandMængde)    {
+    /**
+     *
+     * Opretter og gemmer færdig produkt
+     *
+     * @param navn det færdige produkts navn
+     * @param type valg af type (gin eller whisky)
+     * @param vandMængde hvor meget vand der skal tilføjes til produktet
+     * @return FærdigeProdukt objektet
+     * @throws IllegalArgumentException hvis navn er tomt, hvis type er null og hvis vandmængde er < 0
+     */
+    public static FærdigProdukt createFærdigProdukt(String navn, ProduktVariant type, double vandMængde) throws IllegalArgumentException{
+        if (navn.isBlank()) {
+            throw new IllegalArgumentException("Du skal give det færdige produkt et navn");
+        } if (type == null) {
+            throw new IllegalArgumentException("Du skal vælge en type");
+        } if (vandMængde < 0) {
+            throw new IllegalArgumentException("Vandmængden du påfylder må ikke være negativ");
+        }
         var færdigProduktToAdd = new FærdigProdukt(navn, type, vandMængde);
         storage.addFærdigProdukt(færdigProduktToAdd);
         return færdigProduktToAdd;
     }
+
     public static List<FærdigProdukt> getFærdigProdukter()  {
         return storage.getFærdigProdukter();
     }
 
-    //TappetMængde
-    public static TappetMængde tapMængdeTilFærdigProdukt(double mængdeLiter, Destillat destillat, FærdigProdukt færdigProdukt) {
-
-        if (mængdeLiter > destillat.getFaktiskMængdeLiter())    {
-            throw new RuntimeException("MængdeLiter er større end den totale mægnde væske i destillat");
-        }
-
-        var tappetMængdeToAdd = færdigProdukt.createTappetMængde(mængdeLiter, destillat);
-        tappetMængdeToAdd.getDestillat().tapMængdeLiter(mængdeLiter);
-
-        return tappetMængdeToAdd;
-    }
-    public static List<TappetMængde> getTappetMængder(FærdigProdukt færdigProdukt)  {
+    public static List<DestillatMængde> getTappetMængder(FærdigProdukt færdigProdukt)  {
         return færdigProdukt.getTappetmængder();
     }
 }

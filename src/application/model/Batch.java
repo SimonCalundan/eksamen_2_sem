@@ -31,6 +31,10 @@ public class Batch implements Serializable {
         this.mængdeLiter = mængdeLiter;
     }
 
+    public void tapMængdeLiter(double mængdeLiterTappet) {
+        this.mængdeLiter -= mængdeLiterTappet;
+    }
+
     public double getAlkoholProcent() {
         return alkoholProcent;
     }

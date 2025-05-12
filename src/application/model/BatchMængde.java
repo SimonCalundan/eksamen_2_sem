@@ -1,17 +1,19 @@
 package application.model;
 
-public class PåfyldtMængde {
+import java.io.Serializable;
+
+public class BatchMængde implements Serializable {
 
     private double mængdeILiter;
     private Batch batch;
 
-    public PåfyldtMængde(double mængdeILiter, Batch batch) {
+    public BatchMængde(double mængdeILiter, Batch batch) {
         this.mængdeILiter = mængdeILiter;
         this.batch = batch;
     }
 
     public String toString() {
-        return "påfyldt mængde: " + this.mængdeILiter + " af batch: " + this.batch;
+        return "Mængde: " + this.mængdeILiter + " af batch: " + this.batch;
     }
 
     //linkmetoder
@@ -22,6 +24,7 @@ public class PåfyldtMængde {
     public double getMængdeILiter() {
         return mængdeILiter;
     }
+
     public void setMængdeILiter(double mængde)  {
         mængdeILiter = mængde;
     }

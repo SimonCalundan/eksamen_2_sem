@@ -21,6 +21,7 @@ public class ProduktionFane extends Main{
     private ListView<Fad> fadListView;
     private ListView<ProduktVariant> produktVariantListView;
     private ListView<Fad> fadMin3AarView;
+    private ListView<BatchMængde> påfyldteMængderListView;
 
     private TextField txfTappetMængdeTilFærdigProdukt = new TextField();
     private TextField txfPåfyldtMængdePåFad = new TextField();
@@ -53,7 +54,7 @@ public class ProduktionFane extends Main{
         venstreBox.getChildren().add(batchListView);
         batchListView.setPrefWidth(200);
         batchListView.setPrefHeight(200);
-        batchListView.getItems().setAll(Controller.getBatches());
+        batchListView.getItems().setAll(batchesMedIndhold());
 
         ChangeListener<Batch> listenerBatch = (ov, oldString, newString) -> this.selectionChangedBatch();
         batchListView.getSelectionModel().selectedItemProperty().addListener(listenerBatch);
@@ -75,12 +76,16 @@ public class ProduktionFane extends Main{
         midterBoxTop.getChildren().add(txfPåfyldtMængdePåFad);
         txfPåfyldtMængdePåFad.setPromptText("I liter");
 
+        påfyldteMængderListView = new ListView<>();
+        midterBoxTop.getChildren().add(påfyldteMængderListView);
+        påfyldteMængderListView.getItems().set(Controller.getPåfyldteMængder());
+
         Label lbldato = new Label("Dato for påfyldning");
         lbldato.setStyle("-fx-font-weight: bold");
         midterBoxTop.getChildren().add(lbldato);
 
         midterBoxTop.getChildren().add(txfDateTimeForOprettelseAfDestillat);
-        txfDateTimeForOprettelseAfDestillat.setPromptText("dato ex: 2007,17,06,10,30");
+        txfDateTimeForOprettelseAfDestillat.setPromptText("ex: 2007-12-03T10:15:30");
 
         Button btnOpretPåfyldning = new Button("Påfyld fad");
         midterBoxTop.getChildren().add(btnOpretPåfyldning);
@@ -100,7 +105,7 @@ public class ProduktionFane extends Main{
 
         fadListView = new ListView();
         højreBox.getChildren().add(fadListView);
-        fadListView.setPrefWidth(200);
+        fadListView.setPrefWidth(400);
         fadListView.setPrefHeight(200);
         fadListView.getItems().setAll(Controller.getFade());
 
@@ -123,7 +128,7 @@ public class ProduktionFane extends Main{
 
         fadMin3AarView = new ListView<>();
         venstreBundBox.getChildren().add(fadMin3AarView);
-        fadMin3AarView.setPrefWidth(50);
+        fadMin3AarView.setPrefWidth(300);
         fadMin3AarView.setPrefHeight(100);
         fadMin3AarView.getItems().setAll(getFadePaaLagerIMin3Aar());
 
@@ -147,6 +152,7 @@ public class ProduktionFane extends Main{
         produktVariantListView.setPrefWidth(50);
         produktVariantListView.setPrefHeight(100);
         produktVariantListView.getItems().setAll(ProduktVariant.values());
+
         ChangeListener<ProduktVariant> listenerProduktVariant = (ov, oldString, newString) -> this.selectionChangedProduktionsVariant();
         produktVariantListView.getSelectionModel().selectedItemProperty().addListener(listenerProduktVariant);
 
@@ -190,6 +196,16 @@ public class ProduktionFane extends Main{
     private void createBatchAction(){
         batchVindue.showAndWait();
         updateListviewBatch();
+    }
+
+    private List<Batch> batchesMedIndhold(){
+        List<Batch> batchesMedIndhold = new ArrayList<>();
+        for (Batch batch : Controller.getBatches()) {
+            if (batch.getMængdeLiter() > 0) {
+                batchesMedIndhold.add(batch);
+            }
+        }
+        return batchesMedIndhold;
     }
 
     //opdatere batch listviewet
@@ -241,19 +257,22 @@ public class ProduktionFane extends Main{
         return fadeMin3År;
     }
 
-    //action til påfyldtmængde knap
+    //action til påfyld fad knap
     //TODO mangler at laves
     private void påfyldMængdeAction(){
         try {
             double mændge = Double.parseDouble(txfPåfyldtMængdePåFad.getText().trim());
             Fad valgtFadMedDestillat = fadListView.getSelectionModel().getSelectedItem();
             Batch valgtBatch = batchListView.getSelectionModel().getSelectedItem();
-            Controller.createPåfyldtMængde(valgtFadMedDestillat.getDestillat(), valgtBatch,mændge);
             LocalDateTime tidspunkt = LocalDateTime.parse(txfDateTimeForOprettelseAfDestillat.getText().trim());
-            Controller.createDestillat(tidspunkt,valgtFadMedDestillat);
+            Destillat toBeAdded = Controller.createDestillat(tidspunkt,valgtFadMedDestillat);
+            Controller.createPåfyldtMængde(toBeAdded, valgtBatch,mændge);
         } catch (Exception e) {
             showAlert("Fejl", "Fejl under påfyldning af fad", e.getMessage());
         }
+        updateListviewBatch();
+        updateListviewFade();
+        updateListviewFadeMin3AarPåLager();
     }
 
     //action til opretfærdig produkt
@@ -271,6 +290,7 @@ public class ProduktionFane extends Main{
             cleartxfFields();
             updateListviewFade();
             updateListviewFade();
+            updateListviewFadeMin3AarPåLager();
             showAlert("Produktet er oprettet", "Produktet er oprettet", "Du har oprettet produktet: " + returProdukt);
         } catch (Exception e) {
             showAlert("Fejl", "Fejl under oprettelse af færdig produkt", "!!WTF der er ikke håndteret exceptions i controlleren!!");
@@ -291,5 +311,30 @@ public class ProduktionFane extends Main{
         alert.setHeaderText(headerText);
         alert.setContentText(contentText);
         alert.showAndWait();
+    }
+
+    /**
+     * Metode som bruges til at inddele fadene i fadlisten efter farver,
+     * så brugeren har bedre overblik over fad status
+     *
+     * @param fad
+     * @return hexcode for den farve som Fadet i listen skal have
+     */
+    private static String getFadColorFromCapacity(Fad fad) {
+        if (fad.getDestillat() == null) {
+            return "#AAFFAA";
+        }
+
+        double fullCapacity = fad.getStørrelseLiter();
+        double destillatAmount = fad.getDestillat().getFaktiskMængdeLiter();
+        double remainingCapacity = fullCapacity - destillatAmount;
+
+        if (remainingCapacity == 0) {
+            return "#FFAAAA";
+        } else if (remainingCapacity > 0 && remainingCapacity < fullCapacity) {
+            return "#FFFFAA";
+        } else {
+            return "#AAFFAA";
+        }
     }
 }
