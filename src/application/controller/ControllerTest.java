@@ -254,7 +254,159 @@ class ControllerTest {
         Controller.flytFadTilNyPlacering(fad, nyHylde);
         assertEquals(nyHylde, fad.getHylde());
         assertNotEquals(hylde, fad.getHylde());
+    }
 
+    @Test
+    void createFærdigProdukt() {
+        String navn = "Golden Hour Whisky";
+        ProduktVariant type = ProduktVariant.WHISKY;
 
+        // TC1 - Grænseværdi (vandMænggde = 0)
+        {
+            double vandMængde = 0.0;
+
+            Controller.createFærdigProdukt(navn, type, vandMængde);
+            var færdigProdukt = Controller.getFærdigProdukter().getLast();
+            assertAll(
+                    () -> assertEquals(navn, færdigProdukt.getNavn()),
+                    () -> assertEquals(type, færdigProdukt.getType()),
+                    () -> assertEquals(vandMængde, færdigProdukt.getVandMængde())
+            );
+        }
+        // TC2
+        {
+            double vandMængde = 30.0;
+
+            Controller.createFærdigProdukt(navn, type, vandMængde);
+            var færdigProdukt = Controller.getFærdigProdukter().getLast();
+            assertAll(
+                    () -> assertEquals(navn, færdigProdukt.getNavn()),
+                    () -> assertEquals(type, færdigProdukt.getType()),
+                    () -> assertEquals(vandMængde, færdigProdukt.getVandMængde())
+            );
+        }
+        // TC3 - ugyldig værdi (vandMængde = -30.0)
+        {
+            double vandMængde = 30.0;
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                Controller.createFærdigProdukt(navn, type, vandMængde);
+            });
+            assertEquals("vandMængde må ikke være mindre end 0", exception.getMessage(), "TC3 - ugyldig værdi (vandMængde = -30.0)");
+        }
+    }
+
+    @Test
+    void tapMængdeTilFærdigProdukt() {
+        // Lager
+        var lager = Controller.createLager("Simons lager");
+        var reol = Controller.createReol(lager, "Test reolen");
+        var hylde = Controller.createHylde(reol, "Nederest");
+        var fad = Controller.createFad(
+                30.0, "Peter", "Eg",
+                3, hylde);
+
+        // TC1 - grænseværdi (mængdeLiter = 0, destillat faktiskMængdeLiter = 0)
+        {
+            // Faste værdier
+            // Obs. er nødt til at blive redefineret i hver testcase, for at
+            // destillatets faktiskMængdeLiter ikke bliver påvirkert af tidligere
+            // testcases
+            var destillat = Controller.createDestillat(LocalDateTime.now(), fad);
+            var batch1 = Controller.createBatch("Heksebryg", 45, 0.6);
+            var batch2 = Controller.createBatch("Captain Sall", 55, 0.6);
+            destillat.createPåfyldtMængde(45.0, batch1);
+            destillat.createPåfyldtMængde(55.0, batch2);
+            var færdigProdukt = Controller.createFærdigProdukt(
+                    "Simons sovs", ProduktVariant.WHISKY, 0);
+
+            // Skiftende værdier
+            double mængdeLiter = 0.0;
+            double nyDestillatMængde = destillat.getFaktiskMængdeLiter() - mængdeLiter;
+            var tm = Controller.tapMængdeTilFærdigProdukt(mængdeLiter, destillat, færdigProdukt);
+            assertAll(
+                    () -> assertTrue(færdigProdukt.getTappetmængder().contains(tm)),
+                    () -> assertEquals(nyDestillatMængde, destillat.getFaktiskMængdeLiter())
+
+            );
+        }
+
+        // TC2
+        {
+            // Faste værdier
+            var destillat = Controller.createDestillat(LocalDateTime.now(), fad);
+            var batch1 = Controller.createBatch("Heksebryg", 45, 0.6);
+            var batch2 = Controller.createBatch("Captain Sall", 55, 0.6);
+            destillat.createPåfyldtMængde(45.0, batch1);
+            destillat.createPåfyldtMængde(55.0, batch2);
+            var færdigProdukt = Controller.createFærdigProdukt(
+                    "Simons sovs", ProduktVariant.WHISKY, 0);
+
+            // Skiftende værdier
+            double mængdeLiter = 30.0;
+            double nyDestillatMængde = destillat.getFaktiskMængdeLiter() - mængdeLiter;
+            var tm = Controller.tapMængdeTilFærdigProdukt(mængdeLiter, destillat, færdigProdukt);
+            assertAll(
+                    () -> assertTrue(færdigProdukt.getTappetmængder().contains(tm)),
+                    () -> assertEquals(nyDestillatMængde, destillat.getFaktiskMængdeLiter())
+
+            );
+        }
+        // TC3 - grænseværdi (mængdeLiter = 100, destillat faktiskMængdeLiter = 100)
+        {
+            // Faste værdier
+            var destillat = Controller.createDestillat(LocalDateTime.now(), fad);
+            var batch1 = Controller.createBatch("Heksebryg", 45, 0.6);
+            var batch2 = Controller.createBatch("Captain Sall", 55, 0.6);
+            destillat.createPåfyldtMængde(45.0, batch1);
+            destillat.createPåfyldtMængde(55.0, batch2);
+            var færdigProdukt = Controller.createFærdigProdukt(
+                    "Simons sovs", ProduktVariant.WHISKY, 0);
+
+            // Skiftende værdier
+            double mængdeLiter = 100.0;
+            double nyDestillatMængde = destillat.getFaktiskMængdeLiter() - mængdeLiter;
+            var tm = Controller.tapMængdeTilFærdigProdukt(mængdeLiter, destillat, færdigProdukt);
+            assertAll(
+                    () -> assertTrue(færdigProdukt.getTappetmængder().contains(tm)),
+                    () -> assertEquals(nyDestillatMængde, destillat.getFaktiskMængdeLiter())
+
+            );
+        }
+        // TC4 - ugyldig (mængdeLiter = 101)
+        {
+            // Faste værdier
+            var destillat = Controller.createDestillat(LocalDateTime.now(), fad);
+            var batch1 = Controller.createBatch("Heksebryg", 45, 0.6);
+            var batch2 = Controller.createBatch("Captain Sall", 55, 0.6);
+            destillat.createPåfyldtMængde(45.0, batch1);
+            destillat.createPåfyldtMængde(55.0, batch2);
+            var færdigProdukt = Controller.createFærdigProdukt(
+                    "Simons sovs", ProduktVariant.WHISKY, 0);
+
+            // Skiftende værdier
+            double mængdeLiter = 30.0;
+            Exception exception = assertThrows(IllegalStateException.class, () -> {
+                Controller.tapMængdeTilFærdigProdukt(mængdeLiter, destillat, færdigProdukt);
+            });
+            assertEquals("mængdeLiter må ikke være større end Destillatets faktiskMængdeLiter", exception.getMessage(), "TC4 - ugyldig (mængdeLiter = 101) ");
+        }
+        // TC5 - ugyldig (mængdeLiter = -3.0)
+        {
+            // Faste værdier
+            var destillat = Controller.createDestillat(LocalDateTime.now(), fad);
+            var batch1 = Controller.createBatch("Heksebryg", 45, 0.6);
+            var batch2 = Controller.createBatch("Captain Sall", 55, 0.6);
+            destillat.createPåfyldtMængde(45.0, batch1);
+            destillat.createPåfyldtMængde(55.0, batch2);
+            var færdigProdukt = Controller.createFærdigProdukt(
+                    "Simons sovs", ProduktVariant.WHISKY, 0);
+
+            // Skiftende værdier
+            double mængdeLiter = -3.0;
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                Controller.tapMængdeTilFærdigProdukt(mængdeLiter, destillat, færdigProdukt);
+            });
+            assertEquals("mængdeLiter må ikke være ligmed eller mindre end 0", exception.getMessage(), "TC5 - ugyldig (mængdeLiter = -3.0)");
+        }
     }
 }

@@ -8,7 +8,6 @@ import java.util.List;
 public class FærdigProdukt implements Serializable {
     private String navn;
     private double vandMængde;
-    private LocalDateTime datoForPåfyldning;
     private ProduktVariant type;
     private List<DestillatMængde> tappetmængder;
     private double totalMængdeLiter;
@@ -21,8 +20,6 @@ public class FærdigProdukt implements Serializable {
         this.totalMængdeLiter = vandMængde;
 
         this.tappetmængder = new ArrayList<>();
-
-        this.datoForPåfyldning = LocalDateTime.now();
     }
 
     public void addTappetMængde(DestillatMængde tappetMængde) {
@@ -42,10 +39,6 @@ public class FærdigProdukt implements Serializable {
         return vandMængde;
     }
 
-    public LocalDateTime getDatoForPåfyldning() {
-        return datoForPåfyldning;
-    }
-
     public ProduktVariant getType() {
         return type;
     }
@@ -53,4 +46,6 @@ public class FærdigProdukt implements Serializable {
     public List<DestillatMængde> getTappetmængder() {
         return new ArrayList<>(tappetmængder);
     }
+
+
 }
