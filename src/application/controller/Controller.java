@@ -106,7 +106,6 @@ public abstract class Controller {
     }
 
     //Destillat
-
     /**
      * Opretter et Destillat objekt
      *
@@ -116,7 +115,7 @@ public abstract class Controller {
      * @throws IllegalArgumentException hvis dateForPåfyldning er efter nuværende tidspunkt
      *                                  eller at Fad er null
      */
-    public static Destillat createDestillat(LocalDateTime datoForPåfyldning, Fad fad)
+    public static Destillat createDestillat(LocalDateTime datoForPåfyldning, Fad fad, List<BatchMængde> batchMængder)
             throws IllegalArgumentException {
         if (datoForPåfyldning.isAfter(LocalDateTime.now())) {
             throw new IllegalArgumentException("Dato for påfyldning må ikke være efter nuværende tidspunk");
@@ -125,7 +124,10 @@ public abstract class Controller {
             throw new IllegalArgumentException("Fad må ikke være null");
         }
         var destillatToAdd = new Destillat(datoForPåfyldning, fad);
-        storage.addDestillat(destillatToAdd);
+        for (BatchMængde batchMængde : batchMængder) {
+            destillatToAdd.addPåfyldteMængder(batchMængde);
+            batchMængde.getBatch().tapMængdeLiter(batchMængde.getMængdeILiter());
+        }
         return destillatToAdd;
     }
 
@@ -182,10 +184,10 @@ public abstract class Controller {
             throw new IllegalArgumentException("Mængden skal være større end 0");
         }
         var DestillatMængdeToAdded = new DestillatMængde(mængdeLiter,destillat);
-        storage.addDestillatMængde(DestillatMængdeToAdded);
         destillat.tapMængdeLiter(mængdeLiter);
         return DestillatMængdeToAdded;
     }
+
 
     //Lager
     /**
@@ -264,7 +266,7 @@ public abstract class Controller {
      * @return FærdigeProdukt objektet
      * @throws IllegalArgumentException hvis navn er tomt, hvis type er null og hvis vandmængde er < 0
      */
-    public static FærdigProdukt createFærdigProdukt(String navn, ProduktVariant type, double vandMængde) throws IllegalArgumentException{
+    public static FærdigProdukt createFærdigProdukt(String navn, ProduktVariant type, double vandMængde, List<DestillatMængde> destillatMængder) throws IllegalArgumentException{
         if (navn.isBlank()) {
             throw new IllegalArgumentException("Du skal give det færdige produkt et navn");
         } if (type == null) {
@@ -274,6 +276,10 @@ public abstract class Controller {
         }
         var færdigProduktToAdd = new FærdigProdukt(navn, type, vandMængde);
         storage.addFærdigProdukt(færdigProduktToAdd);
+        for (DestillatMængde destillatMængde : destillatMængder) {
+            færdigProduktToAdd.addTappetMængde(destillatMængde);
+            destillatMængde.getDestillat().tapMængdeLiter(destillatMængde.getMængdeLiter());
+        }
         return færdigProduktToAdd;
     }
 

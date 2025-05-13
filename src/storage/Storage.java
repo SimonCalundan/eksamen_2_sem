@@ -30,8 +30,4 @@ public interface Storage {
     List<FærdigProdukt> getFærdigProdukter();
 
     void addFærdigProdukt(FærdigProdukt færdigProdukt);
-
-    List<DestillatMængde> getDestillatMængde();
-
-    void addDestillatMængde(DestillatMængde destillatMængde);
 }
