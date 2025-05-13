@@ -1,6 +1,7 @@
 package application.controller;
 
 import application.model.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import storage.ListStorage;
 import storage.Storage;
@@ -15,7 +16,7 @@ class ControllerTest {
     private static Reol reol;
     private static Hylde hylde;
 
-    @org.junit.jupiter.api.BeforeEach
+    @BeforeEach
     void setUp() {
         storage = new ListStorage();
         Controller.setStorage(storage);
@@ -25,7 +26,7 @@ class ControllerTest {
         hylde = Controller.createHylde(reol, "fadhylde 01");
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void createDestillat() {
         // TC1 - grænseværdi (dato = nu)
         {
@@ -72,62 +73,48 @@ class ControllerTest {
         }
     }
 
-    @org.junit.jupiter.api.Test
-    void createPåfyldtMængder() {
+    @Test
+    void createBatchMængde() {
         var fad = Controller.createFad(0.5, "Testleverandør", "Eg", 2, hylde);
-        var destillat = Controller.createDestillat(LocalDateTime.now(), fad);
         var batch = Controller.createBatch("TestBatch", 30, 0.6);
 
         // TC1 - grænseværdi (mængdePåfyldt = 0.1)
         {
             double mængdePåfyldt = 0.1;
-            var pmFromCreation = Controller.createPåfyldtMængde(destillat, batch, mængdePåfyldt);
-            BatchMængde pmFromDestillat = destillat.getPåfyldteMængder().getLast();
+            var pm = Controller.createBatchMængde(batch, mængdePåfyldt);
 
             assertAll("TC1 - grænseværdi",
-                    () -> assertTrue(destillat.getPåfyldteMængder().contains(pmFromCreation)),
-                    () -> assertEquals(mængdePåfyldt, pmFromDestillat.getMængdeILiter()),
-                    () -> assertEquals(batch, pmFromDestillat.getBatch()));
+                    () -> assertEquals(mængdePåfyldt, pm.getMængdeILiter()),
+                    () -> assertEquals(batch, pm.getBatch()));
         }
         // TC2 - gyldig
         {
             double mængdePåfyldt = 11.5;
-            var pmFromCreation = Controller.createPåfyldtMængde(destillat, batch, mængdePåfyldt);
+            var pm = Controller.createBatchMængde(batch, mængdePåfyldt);
 
-            BatchMængde pmFromDestillat = destillat.getPåfyldteMængder().getLast();
-
-            assertAll("TC1 - grænseværdi",
-                    () -> assertTrue(destillat.getPåfyldteMængder().contains(pmFromCreation)),
-                    () -> assertEquals(mængdePåfyldt, pmFromDestillat.getMængdeILiter()),
-                    () -> assertEquals(batch, pmFromDestillat.getBatch()));
+            assertAll(
+                    () -> assertEquals(mængdePåfyldt, pm.getMængdeILiter()),
+                    () -> assertEquals(batch, pm.getBatch()));
         }
         // TC3 - ugyldig (mængdePåfyldt = -3.5)
         {
             double mængdePåfyldt = -3.5;
             Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                Controller.createPåfyldtMængde(destillat, batch, mængdePåfyldt);
+                Controller.createBatchMængde(batch, mængdePåfyldt);
             });
             assertEquals("mængdePåfyldt skal være større end 0", exception.getMessage(), "TC3 - ugyldig (mængdePåfyldt = -3.5)");
         }
-        // TC4 - ugyldig (destillat = null)
+        // TC4 - ugyldig (batch = null)
         {
             double mængdePåfyldt = 15.0;
             Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                Controller.createPåfyldtMængde(null, batch, mængdePåfyldt);
-            });
-            assertEquals("Destillat må ikke være null", exception.getMessage(), "TC4 - ugyldig (destillat = null)");
-        }
-        // TC5 - ugyldig (batch = null)
-        {
-            double mængdePåfyldt = 15.0;
-            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                Controller.createPåfyldtMængde(destillat, null, mængdePåfyldt);
+                Controller.createBatchMængde(null, mængdePåfyldt);
             });
             assertEquals("Batch må ikke være null", exception.getMessage(), "TC5 - ugyldig (batch = null)");
         }
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void createFad() {
         // TC1 - grænseværdi (0.0 liter)
         {
@@ -182,7 +169,7 @@ class ControllerTest {
     }
 
 
-    @org.junit.jupiter.api.Test
+    @Test
     void createBatch() {
         // TC1 - grænseværdi (mængdeLiter = 0.5)
         {
@@ -307,106 +294,24 @@ class ControllerTest {
 
         // TC1 - grænseværdi (mængdeLiter = 0, destillat faktiskMængdeLiter = 0)
         {
-            // Faste værdier
-            // Obs. er nødt til at blive redefineret i hver testcase, for at
-            // destillatets faktiskMængdeLiter ikke bliver påvirkert af tidligere
-            // testcases
-            var destillat = Controller.createDestillat(LocalDateTime.now(), fad);
-            var batch1 = Controller.createBatch("Heksebryg", 45, 0.6);
-            var batch2 = Controller.createBatch("Captain Sall", 55, 0.6);
-            destillat.createPåfyldtMængde(45.0, batch1);
-            destillat.createPåfyldtMængde(55.0, batch2);
-            var færdigProdukt = Controller.createFærdigProdukt(
-                    "Simons sovs", ProduktVariant.WHISKY, 0);
 
-            // Skiftende værdier
-            double mængdeLiter = 0.0;
-            double nyDestillatMængde = destillat.getFaktiskMængdeLiter() - mængdeLiter;
-            var tm = Controller.tapMængdeTilFærdigProdukt(mængdeLiter, destillat, færdigProdukt);
-            assertAll(
-                    () -> assertTrue(færdigProdukt.getTappetmængder().contains(tm)),
-                    () -> assertEquals(nyDestillatMængde, destillat.getFaktiskMængdeLiter())
-
-            );
         }
 
         // TC2
         {
-            // Faste værdier
-            var destillat = Controller.createDestillat(LocalDateTime.now(), fad);
-            var batch1 = Controller.createBatch("Heksebryg", 45, 0.6);
-            var batch2 = Controller.createBatch("Captain Sall", 55, 0.6);
-            destillat.createPåfyldtMængde(45.0, batch1);
-            destillat.createPåfyldtMængde(55.0, batch2);
-            var færdigProdukt = Controller.createFærdigProdukt(
-                    "Simons sovs", ProduktVariant.WHISKY, 0);
 
-            // Skiftende værdier
-            double mængdeLiter = 30.0;
-            double nyDestillatMængde = destillat.getFaktiskMængdeLiter() - mængdeLiter;
-            var tm = Controller.tapMængdeTilFærdigProdukt(mængdeLiter, destillat, færdigProdukt);
-            assertAll(
-                    () -> assertTrue(færdigProdukt.getTappetmængder().contains(tm)),
-                    () -> assertEquals(nyDestillatMængde, destillat.getFaktiskMængdeLiter())
-
-            );
         }
         // TC3 - grænseværdi (mængdeLiter = 100, destillat faktiskMængdeLiter = 100)
         {
-            // Faste værdier
-            var destillat = Controller.createDestillat(LocalDateTime.now(), fad);
-            var batch1 = Controller.createBatch("Heksebryg", 45, 0.6);
-            var batch2 = Controller.createBatch("Captain Sall", 55, 0.6);
-            destillat.createPåfyldtMængde(45.0, batch1);
-            destillat.createPåfyldtMængde(55.0, batch2);
-            var færdigProdukt = Controller.createFærdigProdukt(
-                    "Simons sovs", ProduktVariant.WHISKY, 0);
 
-            // Skiftende værdier
-            double mængdeLiter = 100.0;
-            double nyDestillatMængde = destillat.getFaktiskMængdeLiter() - mængdeLiter;
-            var tm = Controller.tapMængdeTilFærdigProdukt(mængdeLiter, destillat, færdigProdukt);
-            assertAll(
-                    () -> assertTrue(færdigProdukt.getTappetmængder().contains(tm)),
-                    () -> assertEquals(nyDestillatMængde, destillat.getFaktiskMængdeLiter())
-
-            );
         }
         // TC4 - ugyldig (mængdeLiter = 101)
         {
-            // Faste værdier
-            var destillat = Controller.createDestillat(LocalDateTime.now(), fad);
-            var batch1 = Controller.createBatch("Heksebryg", 45, 0.6);
-            var batch2 = Controller.createBatch("Captain Sall", 55, 0.6);
-            destillat.createPåfyldtMængde(45.0, batch1);
-            destillat.createPåfyldtMængde(55.0, batch2);
-            var færdigProdukt = Controller.createFærdigProdukt(
-                    "Simons sovs", ProduktVariant.WHISKY, 0);
 
-            // Skiftende værdier
-            double mængdeLiter = 30.0;
-            Exception exception = assertThrows(IllegalStateException.class, () -> {
-                Controller.tapMængdeTilFærdigProdukt(mængdeLiter, destillat, færdigProdukt);
-            });
-            assertEquals("mængdeLiter må ikke være større end Destillatets faktiskMængdeLiter", exception.getMessage(), "TC4 - ugyldig (mængdeLiter = 101) ");
         }
         // TC5 - ugyldig (mængdeLiter = -3.0)
         {
-            // Faste værdier
-            var destillat = Controller.createDestillat(LocalDateTime.now(), fad);
-            var batch1 = Controller.createBatch("Heksebryg", 45, 0.6);
-            var batch2 = Controller.createBatch("Captain Sall", 55, 0.6);
-            destillat.createPåfyldtMængde(45.0, batch1);
-            destillat.createPåfyldtMængde(55.0, batch2);
-            var færdigProdukt = Controller.createFærdigProdukt(
-                    "Simons sovs", ProduktVariant.WHISKY, 0);
 
-            // Skiftende værdier
-            double mængdeLiter = -3.0;
-            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                Controller.tapMængdeTilFærdigProdukt(mængdeLiter, destillat, færdigProdukt);
-            });
-            assertEquals("mængdeLiter må ikke være ligmed eller mindre end 0", exception.getMessage(), "TC5 - ugyldig (mængdeLiter = -3.0)");
         }
     }
 }
