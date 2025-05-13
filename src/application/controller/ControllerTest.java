@@ -7,6 +7,8 @@ import storage.ListStorage;
 import storage.Storage;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,48 +30,98 @@ class ControllerTest {
 
     @Test
     void createDestillat() {
-        // TC1 - grænseværdi (dato = nu)
+        var fad = Controller.createFad(40.0, "Simon", "Eg", 2, hylde);
+        // TC1 - gyldig
         {
-            var datoForPåfyldning = LocalDateTime.now();
-            var fad = Controller.createFad(0.5, "Testleverandør",
-                    "Eg", 2, hylde);
-            Controller.createDestillat(datoForPåfyldning, fad);
-            var destillat = Controller.getDestillater().getLast();
-            assertAll("TC1 - grænseværdi",
-                    () -> assertEquals(datoForPåfyldning, destillat.getDatoForPåfyldning()),
-                    () -> assertEquals(fad, destillat.getFad()));
+            Batch b1 = Controller.createBatch("B1", 30, 0.7);
+            Batch b2 = Controller.createBatch("B2", 70, 0.6);
+            List<BatchMængde> bmList = new ArrayList<>(List.of(
+                    Controller.createBatchMængde(b1, 30),
+                    Controller.createBatchMængde(b2, 70)
+            ));
+            LocalDateTime datoForPåfyldning = LocalDateTime.now().minusMinutes(1);
+            var d = Controller.createDestillat(datoForPåfyldning, fad, bmList);
+
+            assertAll(
+                    () -> assertNotNull(d),
+                    () -> assertTrue(d.getPåfyldteMængder().containsAll(bmList)),
+                    () -> assertEquals(0, b1.getMængdeLiter()),
+                    () -> assertEquals(0, b2.getMængdeLiter())
+            );
         }
         // TC2 - gyldig
         {
-            var datoForPåfyldning = LocalDateTime.of(2025, 5,
-                    6, 11, 50);
-            var fad = Controller.createFad(0.5, "Testleverandør",
-                    "Eg", 2, hylde);
-            Controller.createDestillat(datoForPåfyldning, fad);
-            var destillat = Controller.getDestillater().getLast();
-            assertAll("TC2 - gyldig",
-                    () -> assertEquals(datoForPåfyldning, destillat.getDatoForPåfyldning()),
-                    () -> assertEquals(fad, destillat.getFad()));
+            Batch b1 = Controller.createBatch("B1", 30, 0.7);
+            Batch b2 = Controller.createBatch("B2", 70, 0.6);
+            List<BatchMængde> bmList = new ArrayList<>(List.of(
+                    Controller.createBatchMængde(b1, 30),
+                    Controller.createBatchMængde(b2, 70)
+            ));
+            LocalDateTime datoForPåfyldning = LocalDateTime.now();
+            var d = Controller.createDestillat(datoForPåfyldning, fad, bmList);
+
+            assertAll(
+                    () -> assertNotNull(d),
+                    () -> assertTrue(d.getPåfyldteMængder().containsAll(bmList)),
+                    () -> assertEquals(0, b1.getMængdeLiter()),
+                    () -> assertEquals(0, b2.getMængdeLiter())
+            );
         }
-        // TC3 - ugyldig (Fad = null)
+        // TC3 - ugyldig (datoForPåfyldning = nu + 1 sekund)
         {
-            var datoForPåfyldning = LocalDateTime.of(2025, 5,
-                    6, 11, 50);
+            Batch b1 = Controller.createBatch("B1", 30, 0.7);
+            Batch b2 = Controller.createBatch("B2", 70, 0.6);
+            List<BatchMængde> bmList = new ArrayList<>(List.of(
+                    Controller.createBatchMængde(b1, 30),
+                    Controller.createBatchMængde(b2, 70)
+            ));
+            LocalDateTime datoForPåfyldning = LocalDateTime.now().plusSeconds(1);
+
             Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                Controller.createDestillat(datoForPåfyldning, null);
+                Controller.createDestillat(datoForPåfyldning, fad, bmList);
             });
-            assertEquals("Fad må ikke være null", exception.getMessage(), "TC3 - ugyldig (Fad = null)");
+            assertEquals("Dato for påfyldning må ikke være efter nuværende tidspunk", exception.getMessage());
         }
-        // TC4 - ugyldig (datoForPåfyldning = nu + 10 dage)
+        // TC4 - ugyldig (fad er null)
         {
-            var datoForPåfyldning = LocalDateTime.now().plusDays(10);
-            var fad = Controller.createFad(0.5, "Testleverandør",
-                    "Eg", 2, hylde);
+            Batch b1 = Controller.createBatch("B1", 30, 0.7);
+            Batch b2 = Controller.createBatch("B2", 70, 0.6);
+            List<BatchMængde> bmList = new ArrayList<>(List.of(
+                    Controller.createBatchMængde(b1, 30),
+                    Controller.createBatchMængde(b2, 70)
+            ));
+            LocalDateTime datoForPåfyldning = LocalDateTime.now().minusMinutes(5);
+
             Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                Controller.createDestillat(datoForPåfyldning, fad);
+                Controller.createDestillat(datoForPåfyldning, null, bmList);
             });
-            assertEquals("Dato for påfyldning må ikke være efter nuværende tidspunk",
-                    exception.getMessage(), "TC4 - ugyldig (datoForPåfyldning = nu + 10 dage)");
+            assertEquals("Fad må ikke være null", exception.getMessage());
+        }
+        // TC5 - ugyldig (datoForPåfyldning = nu + 5 dage)
+        {
+            Batch b1 = Controller.createBatch("B1", 30, 0.7);
+            Batch b2 = Controller.createBatch("B2", 70, 0.6);
+            List<BatchMængde> bmList = new ArrayList<>(List.of(
+                    Controller.createBatchMængde(b1, 30),
+                    Controller.createBatchMængde(b2, 70)
+            ));
+            LocalDateTime datoForPåfyldning = LocalDateTime.now().plusDays(5);
+
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                Controller.createDestillat(datoForPåfyldning, fad, bmList);
+            });
+            assertEquals("Dato for påfyldning må ikke være efter nuværende tidspunk", exception.getMessage());
+        }
+        // TC6 - ugyldig (batchMænger er tom)
+        {
+            List<BatchMængde> bmListEmpty = new ArrayList<>();
+            LocalDateTime datoForPåfyldning = LocalDateTime.now();
+
+
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                Controller.createDestillat(datoForPåfyldning, fad, bmListEmpty);
+            });
+            assertEquals("batchMængder må ikke være tom", exception.getMessage());
         }
     }
 
@@ -102,7 +154,7 @@ class ControllerTest {
             Exception exception = assertThrows(IllegalArgumentException.class, () -> {
                 Controller.createBatchMængde(batch, mængdePåfyldt);
             });
-            assertEquals("mængdePåfyldt skal være større end 0", exception.getMessage(), "TC3 - ugyldig (mængdePåfyldt = -3.5)");
+            assertEquals("mængdePåfyldt skal være større end 0", exception.getMessage());
         }
         // TC4 - ugyldig (batch = null)
         {
@@ -110,7 +162,15 @@ class ControllerTest {
             Exception exception = assertThrows(IllegalArgumentException.class, () -> {
                 Controller.createBatchMængde(null, mængdePåfyldt);
             });
-            assertEquals("Batch må ikke være null", exception.getMessage(), "TC5 - ugyldig (batch = null)");
+            assertEquals("Batch må ikke være null", exception.getMessage());
+        }
+        // TC5 - ugyldig (mængdePåfyldt > batch.getMængdeLiter)
+        {
+            double mængdePåfyldt = 40;
+            Exception exception = assertThrows(IllegalStateException.class, () -> {
+                Controller.createBatchMængde(batch, mængdePåfyldt);
+            });
+            assertEquals("mængdePåfyldt må ikke være større end batchets mængdeLite", exception.getMessage());
         }
     }
 
@@ -243,75 +303,150 @@ class ControllerTest {
         assertNotEquals(hylde, fad.getHylde());
     }
 
+    // TODO
     @Test
     void createFærdigProdukt() {
         String navn = "Golden Hour Whisky";
         ProduktVariant type = ProduktVariant.WHISKY;
+        var fad = Controller.createFad(30.0,
+                "Simon", "Eg", 2, hylde);
 
         // TC1 - Grænseværdi (vandMænggde = 0)
         {
+            var batch = Controller.createBatch("B1", 30.0, 0.6);
+            var bm = Controller.createBatchMængde(batch, 30.0);
+            var destillat = Controller.createDestillat(
+                    LocalDateTime.now(), fad, List.of(bm));
+            DestillatMængde dm = Controller.createDestillatMængde(destillat,
+                    30.0);
             double vandMængde = 0.0;
 
-            Controller.createFærdigProdukt(navn, type, vandMængde);
-            var færdigProdukt = Controller.getFærdigProdukter().getLast();
+            List<DestillatMængde> dmList = new ArrayList<>(List.of(dm));
+            Controller.createFærdigProdukt(navn, type, vandMængde, dmList);
+
+            var fp = Controller.getFærdigProdukter().getLast();
             assertAll(
-                    () -> assertEquals(navn, færdigProdukt.getNavn()),
-                    () -> assertEquals(type, færdigProdukt.getType()),
-                    () -> assertEquals(vandMængde, færdigProdukt.getVandMængde())
+                    () -> assertEquals(navn, fp.getNavn()),
+                    () -> assertEquals(type, fp.getType()),
+                    () -> assertEquals(vandMængde, fp.getVandMængde()),
+                    () -> assertTrue(fp.getTappetmængder().containsAll(dmList)),
+                    () -> {
+                        double listSum = dmList.stream()
+                                .mapToDouble(el -> el.getDestillat().getFaktiskMængdeLiter())
+                                .sum();
+                        assertEquals(0, listSum);
+                    }
+
             );
         }
         // TC2
         {
+            var batch = Controller.createBatch("B1", 30.0, 0.6);
+            var bm = Controller.createBatchMængde(batch, 30.0);
+            var destillat = Controller.createDestillat(
+                    LocalDateTime.now(), fad, List.of(bm));
+            DestillatMængde dm = Controller.createDestillatMængde(destillat,
+                    30.0);
             double vandMængde = 30.0;
 
-            Controller.createFærdigProdukt(navn, type, vandMængde);
-            var færdigProdukt = Controller.getFærdigProdukter().getLast();
+            List<DestillatMængde> dmList = new ArrayList<>(List.of(dm));
+            Controller.createFærdigProdukt(navn, type, vandMængde, dmList);
+
+            var fp = Controller.getFærdigProdukter().getLast();
             assertAll(
-                    () -> assertEquals(navn, færdigProdukt.getNavn()),
-                    () -> assertEquals(type, færdigProdukt.getType()),
-                    () -> assertEquals(vandMængde, færdigProdukt.getVandMængde())
+                    () -> assertEquals(navn, fp.getNavn()),
+                    () -> assertEquals(type, fp.getType()),
+                    () -> assertEquals(vandMængde, fp.getVandMængde()),
+                    () -> assertTrue(fp.getTappetmængder().containsAll(dmList)),
+                    () -> {
+                        double listSum = dmList.stream()
+                                .mapToDouble(el -> el.getDestillat().getFaktiskMængdeLiter())
+                                .sum();
+                        assertEquals(0, listSum);
+                    }
             );
         }
         // TC3 - ugyldig værdi (vandMængde = -30.0)
         {
-            double vandMængde = 30.0;
+            var batch = Controller.createBatch("B1", 30.0, 0.6);
+            var bm = Controller.createBatchMængde(batch, 30.0);
+            var destillat = Controller.createDestillat(
+                    LocalDateTime.now(), fad, List.of(bm));
+            DestillatMængde dm = Controller.createDestillatMængde(destillat,
+                    30.0);
+            double vandMængde = -30.0;
+            List<DestillatMængde> dmList = new ArrayList<>(List.of(dm));
             Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                Controller.createFærdigProdukt(navn, type, vandMængde);
+                Controller.createFærdigProdukt(navn, type, vandMængde, dmList);
             });
             assertEquals("vandMængde må ikke være mindre end 0", exception.getMessage(), "TC3 - ugyldig værdi (vandMængde = -30.0)");
         }
     }
 
     @Test
-    void tapMængdeTilFærdigProdukt() {
-        // Lager
-        var lager = Controller.createLager("Simons lager");
-        var reol = Controller.createReol(lager, "Test reolen");
-        var hylde = Controller.createHylde(reol, "Nederest");
+    void createDestillatMængde() {
         var fad = Controller.createFad(
-                30.0, "Peter", "Eg",
+                40.0, "Peter", "Eg",
                 3, hylde);
 
-        // TC1 - grænseværdi (mængdeLiter = 0, destillat faktiskMængdeLiter = 0)
-        {
+        var batch = Controller.createBatch("Simons Batch", 40, 0.6);
+        List<BatchMængde> batchMængdeList = new ArrayList<>(List.of(
+                Controller.createBatchMængde(batch, 40)
+        ));
 
+        // TC1 - grænseværdi (mængdeLiter = 0.1)
+        {
+            var destillat = Controller.createDestillat(LocalDateTime.now(), fad, batchMængdeList);
+            double mængdeLiter = 0.1;
+
+            DestillatMængde dm = Controller.createDestillatMængde(destillat, mængdeLiter);
+            assertNotNull(dm);
         }
 
-        // TC2
+        // TC2 - normal værdi (mængdeLiter = 30)
         {
+            var destillat = Controller.createDestillat(LocalDateTime.now(), fad, batchMængdeList);
+            double mængdeLiter = 30;
+            double forventetEfter = destillat.getFaktiskMængdeLiter() - mængdeLiter;
 
+            DestillatMængde dm = Controller.createDestillatMængde(destillat, mængdeLiter);
+
+            assertNotNull(dm);
         }
-        // TC3 - grænseværdi (mængdeLiter = 100, destillat faktiskMængdeLiter = 100)
-        {
 
+        // TC3 - grænseværdi (mængdeLiter = 40)
+        {
+            var destillat = Controller.createDestillat(LocalDateTime.now(), fad, batchMængdeList);
+            double mængdeLiter = 40;
+            double forventetEfter = 0.0;
+
+
+            DestillatMængde dm = Controller.createDestillatMængde(destillat, mængdeLiter);
+            assertNotNull(dm);
         }
-        // TC4 - ugyldig (mængdeLiter = 101)
-        {
 
+        // TC4 - Ugyldig (mængdeLiter = 50 > faktiskMængdeLiter)
+        {
+            var destillat = Controller.createDestillat(LocalDateTime.now(), fad, batchMængdeList);
+            double mængdeLiter = 50;
+
+            IllegalStateException exception = assertThrows(IllegalStateException.class, () ->
+                    Controller.createDestillatMængde(destillat, mængdeLiter)
+            );
+
+            assertEquals("Der er ikke nok mængde i Destillatet", exception.getMessage());
         }
-        // TC5 - ugyldig (mængdeLiter = -3.0)
-        {
 
+        // TC5 - Ugyldig (mængdeLiter = -0.3)
+        {
+            var destillat = Controller.createDestillat(LocalDateTime.now(), fad, batchMængdeList);
+            double mængdeLiter = -0.3;
+
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                    Controller.createDestillatMængde(destillat, mængdeLiter)
+            );
+
+            assertEquals("Mængden skal være større end 0", exception.getMessage());
         }
     }
 }
