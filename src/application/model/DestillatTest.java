@@ -21,7 +21,8 @@ class DestillatTest {
 
     @Test
     void constructorTest() {
-        LocalDateTime datoForPåfyldning = LocalDateTime.now();
+        LocalDateTime datoForPåfyldning = LocalDateTime
+                .of(2025, 1, 1, 13, 13);
         Destillat destillat = new Destillat(datoForPåfyldning, fad);
 
         assertAll(
