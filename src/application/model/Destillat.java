@@ -39,6 +39,10 @@ public class Destillat implements Serializable {
         return faktiskMængdeLiter;
     }
 
+    /**
+     * Pre: mængdeLiter er ikke større end faktiskMængdeLiter
+     * @param mængdeLiter
+     */
     public void tapMængdeLiter(double mængdeLiter) {
         this.faktiskMængdeLiter -= mængdeLiter;
     }
@@ -61,6 +65,10 @@ public class Destillat implements Serializable {
         return Collections.unmodifiableList(påfyldteMængder);
     }
 
+    /**
+     * Pre: påfyldtMængde er ikke null
+     * @param påfyldtMængde
+     */
     public void addPåfyldteMængder(BatchMængde påfyldtMængde) {
         if (!påfyldteMængder.contains(påfyldtMængde)) {
             påfyldteMængder.add(påfyldtMængde);
@@ -71,6 +79,10 @@ public class Destillat implements Serializable {
         }
     }
 
+    /**
+     * Pre: Påfyldning er ikke null
+     * @param påfyldning
+     */
     public void removePåfyldtMængde(BatchMængde påfyldning) {
         if (påfyldteMængder.contains(påfyldning)) {
             påfyldteMængder.remove(påfyldning);
