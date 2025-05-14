@@ -2,7 +2,6 @@ package gui;
 
 import application.controller.Controller;
 import application.model.BatchMængde;
-import application.model.DestillatMængde;
 import javafx.application.Application;
 import storage.ListStorage;
 import storage.Storage;
@@ -21,7 +20,7 @@ public class App {
         }
         Controller.setStorage(storage);
         initStorage();
-        Application.launch(Main.class);
+        Application.launch(MainFane.class);
         saveStorage(storage);
     }
 

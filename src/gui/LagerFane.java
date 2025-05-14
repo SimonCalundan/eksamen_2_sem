@@ -15,7 +15,7 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LagerFane extends Main {
+public class LagerFane extends MainFane {
     private ListView<Lager> lwLagre;
     private ListView<Reol> lwReoler;
     private ListView<Hylde> lwHylder;

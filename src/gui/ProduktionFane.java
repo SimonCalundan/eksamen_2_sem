@@ -13,9 +13,8 @@ import javafx.scene.layout.VBox;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-public class ProduktionFane extends Main {
+public class ProduktionFane extends MainFane {
 
     private CreateBatchVindue batchVindue;
     private PåfyldningsVindue påfyldningsVindue;
@@ -382,7 +381,7 @@ public class ProduktionFane extends Main {
             Controller.createFærdigProdukt(txfNavn.getText().trim(), produktVariantListView.getSelectionModel().getSelectedItem(), vandmængde, påfyldtMængdeDestillatListview.getItems());
             nulstilFærdigProduktAction();
         } catch (Exception e) {
-            showAlert("Fejl", "Fejl under oprettelse af færdig produkt", "!!WTF der er ikke håndteret exceptions i controlleren!!");
+            showAlert("Fejl", "Fejl under oprettelse af færdig produkt", e.getMessage());
         }
     }
 
