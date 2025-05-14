@@ -7,27 +7,31 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-public class ProduktionFane extends Main{
+public class ProduktionFane extends Main {
 
     private CreateBatchVindue batchVindue;
+    private PåfyldningsVindue påfyldningsVindue;
 
     private ListView<Batch> batchListView;
     private ListView<Fad> fadListView;
     private ListView<ProduktVariant> produktVariantListView;
-    private ListView<Fad> fadMin3AarView;
-    private ListView<BatchMængde> påfyldteMængderListView;
+    private ListView<Destillat> destillatMin3årListView;
+    private ListView<BatchMængde> påfyldtMængdeBatchListview;
+    private ListView<DestillatMængde> påfyldtMængdeDestillatListview;
 
-    private TextField txfTappetMængdeTilFærdigProdukt = new TextField();
-    private TextField txfPåfyldtMængdePåFad = new TextField();
     private TextField txfDateTimeForOprettelseAfDestillat = new TextField();
     private TextField txfNavn = new TextField();
     private TextField txfVandMængde = new TextField();
+
+    private Button btnTilføjBatch, btnTilføjDestillat;
 
     public Tab getTab() {
         Tab tab = new Tab("Produktion");
@@ -37,19 +41,47 @@ public class ProduktionFane extends Main{
         grid.setVgap(15);
         grid.setPadding(new Insets(10));
         grid.setAlignment(Pos.CENTER);
-        grid.setGridLinesVisible(true);
+        grid.setGridLinesVisible(false);
+
+        VBox lblProduktionsBox = new VBox();
+        lblProduktionsBox.setAlignment(Pos.CENTER);
+        lblProduktionsBox.setSpacing(0);
+        lblProduktionsBox.setPadding(new Insets(10));
+        grid.add(lblProduktionsBox, 0, 0);
+        Label lblProduktRubrik = new Label("Produktion");
+        lblProduktionsBox.getChildren().add(lblProduktRubrik);
+
+        HBox samletBoxTop = new HBox();
+        samletBoxTop.setAlignment(Pos.CENTER);
+        samletBoxTop.setSpacing(10);
+        samletBoxTop.setPadding(new Insets(10));
+        samletBoxTop.setStyle("-fx-border-color: gray; -fx-background-color: #f0f0f0;");
+        grid.add(samletBoxTop, 0, 1);
+
+        VBox lblFærdigProduktBox = new VBox();
+        lblFærdigProduktBox.setAlignment(Pos.CENTER);
+        lblFærdigProduktBox.setSpacing(0);
+        lblFærdigProduktBox.setPadding(new Insets(10));
+        grid.add(lblFærdigProduktBox, 0, 2);
+        Label lblFærdigprodukt = new Label("Færdig produkt");
+        lblFærdigProduktBox.getChildren().add(lblFærdigprodukt);
+
+        HBox samletBoxMidt = new HBox();
+        samletBoxMidt.setAlignment(Pos.CENTER);
+        samletBoxMidt.setSpacing(10);
+        samletBoxMidt.setPadding(new Insets(10));
+        samletBoxMidt.setStyle("-fx-border-color: gray; -fx-background-color: #f0f0f0;");
+        grid.add(samletBoxMidt, 0, 3);
 
         //Venstrebox
         //------------------------------------------------------------------------------------------------------------
         VBox venstreBox = new VBox();
-        venstreBox.setSpacing(0);
+        venstreBox.setSpacing(5);
         venstreBox.setAlignment(Pos.CENTER);
-        grid.add(venstreBox,0,0);
+        samletBoxTop.getChildren().add(venstreBox);
 
         Label lblBatches = new Label("Batches");
-        lblBatches.setStyle("-fx-font-weight: bold");
         venstreBox.getChildren().add(lblBatches);
-        // add a listView to the pane(at col=1, row=1)
         batchListView = new ListView();
         venstreBox.getChildren().add(batchListView);
         batchListView.setPrefWidth(200);
@@ -59,52 +91,52 @@ public class ProduktionFane extends Main{
         ChangeListener<Batch> listenerBatch = (ov, oldString, newString) -> this.selectionChangedBatch();
         batchListView.getSelectionModel().selectedItemProperty().addListener(listenerBatch);
 
-//        lvwNames.getSelectionModel().clearSelection();
+        Label lblNone = new Label();
+        venstreBox.getChildren().add(lblNone);
 
-        //Under venstre box
-        //-----------------------------------------------------------------------------------------------------------
-        Button btnTilføjBatch = new Button("Tilføj batch");
-        grid.add(btnTilføjBatch,0,1);
+        btnTilføjBatch = new Button("Tilføj batch til påfyldning");
+        btnTilføjBatch.setDisable(true);
+        btnTilføjBatch.setOnAction(event -> {
+            Batch batch = batchListView.getSelectionModel().getSelectedItem();
+            createPåfyldningVindue(batch);
+        });
+        venstreBox.getChildren().add(btnTilføjBatch);
 
         //Midterbox
         //------------------------------------------------------------------------------------------------------------
         VBox midterBoxTop = new VBox();
         midterBoxTop.setSpacing(0);
         midterBoxTop.setAlignment(Pos.CENTER);
-        grid.add(midterBoxTop,1,0);
+        samletBoxTop.getChildren().add(midterBoxTop);
 
         Label lblTappeMængde = new Label("Påfyldt mængde");
         midterBoxTop.getChildren().add(lblTappeMængde);
-        lblTappeMængde.setStyle("-fx-font-weight: bold");
 
-        påfyldteMængderListView = new ListView<>();
-        påfyldteMængderListView.setPrefWidth(200);
-        påfyldteMængderListView.setPrefHeight(150);
-        midterBoxTop.getChildren().add(påfyldteMængderListView);
+        påfyldtMængdeBatchListview = new ListView<>();
+        påfyldtMængdeBatchListview.setPrefWidth(200);
+        påfyldtMængdeBatchListview.setPrefHeight(150);
+        midterBoxTop.getChildren().add(påfyldtMængdeBatchListview);
 
         Label lbldato = new Label("Dato for påfyldning");
-        lbldato.setStyle("-fx-font-weight: bold");
         midterBoxTop.getChildren().add(lbldato);
 
         midterBoxTop.getChildren().add(txfDateTimeForOprettelseAfDestillat);
         txfDateTimeForOprettelseAfDestillat.setPromptText("ex: 2007-12-03T10:15:30");
 
-        //Under midter box
-        //------------------------------------------------------------------------------------------------------------
-        Button btnOpretPåfyldning = new Button("Påfyld fad");
-        grid.add(btnOpretPåfyldning,1,1);
-        btnOpretPåfyldning.setOnAction(event ->this.påfyldMængdeAction());
+        Label lblDatoFormat = new Label("år-måned-dagTtimer:min:sek");
+        lblDatoFormat.setStyle("-fx-font-style: italic;");
+        midterBoxTop.getChildren().add(lblDatoFormat);
+
 
         //Højrebox
         //------------------------------------------------------------------------------------------------------------
 
         VBox højreBox = new VBox();
-        højreBox.setSpacing(0);
+        højreBox.setSpacing(5);
         højreBox.setAlignment(Pos.CENTER);
-        grid.add(højreBox,2,0);
+        samletBoxTop.getChildren().add(højreBox);
 
         Label lblFade = new Label("Fade");
-        lblFade.setStyle("-fx-font-weight: bold");
         højreBox.getChildren().add(lblFade);
 
         fadListView = new ListView();
@@ -116,39 +148,57 @@ public class ProduktionFane extends Main{
         ChangeListener<Fad> listenerFad = (ov, oldString, newString) -> this.selectionChangedFade();
         fadListView.getSelectionModel().selectedItemProperty().addListener(listenerFad);
 
-//        lvwNames.getSelectionModel().clearSelection();
+        Button btnNulstilProduktion = new Button("Nulstil");
+        højreBox.getChildren().add(btnNulstilProduktion);
+        btnNulstilProduktion.setOnAction(event -> nulstilProduktionAction());
 
+        Button btnOpretPåfyldning = new Button("Påfyld fad");
+        højreBox.getChildren().add(btnOpretPåfyldning);
+        btnOpretPåfyldning.setOnAction(event -> this.påfyldMængdeAction());
+
+        //MidtSamletBox starter --->
 
         //Venstre bundbox
         //------------------------------------------------------------------------------------------------------------
         VBox venstreBundBox = new VBox();
-        venstreBundBox.setSpacing(0);
+        venstreBundBox.setSpacing(5);
         venstreBundBox.setAlignment(Pos.CENTER);
-        grid.add(venstreBundBox,0,2);
+        samletBoxMidt.getChildren().add(venstreBundBox);
 
         Label lblFadMin3Aar = new Label("Fade der har lagt på lager i min. 3 år");
-        lblFadMin3Aar.setStyle("-fx-font-weight: bold");
         venstreBundBox.getChildren().add(lblFadMin3Aar);
 
-        fadMin3AarView = new ListView<>();
-        venstreBundBox.getChildren().add(fadMin3AarView);
-        fadMin3AarView.setPrefWidth(300);
-        fadMin3AarView.setPrefHeight(100);
-        fadMin3AarView.getItems().setAll(getFadePaaLagerIMin3Aar());
+        destillatMin3årListView = new ListView<>();
+        venstreBundBox.getChildren().add(destillatMin3årListView);
+        destillatMin3årListView.setPrefWidth(300);
+        destillatMin3årListView.setPrefHeight(100);
+        destillatMin3årListView.getItems().setAll(getDestillaterPåLagerMin3År());
 
-        ChangeListener<Fad> listenerFadMin3Aar = (ov, oldString, newString) -> this.selectionChangedFadeMin3Aar();
-        fadListView.getSelectionModel().selectedItemProperty().addListener(listenerFadMin3Aar);
+        ChangeListener<Destillat> listenerDestillat = (ov, oldString, newString) -> this.selectionChangedDestillatMin3år();
+        destillatMin3årListView.getSelectionModel().selectedItemProperty().addListener(listenerDestillat);
+
+        btnTilføjDestillat = new Button("Tilføj destillat til påfyldning");
+        btnTilføjDestillat.setDisable(true);
+        btnTilføjDestillat.setOnAction(event -> {
+                Destillat destillat = destillatMin3årListView.getSelectionModel().getSelectedItem();
+                createPåfyldningVindue(destillat);
+                });
+        venstreBundBox.getChildren().add(btnTilføjDestillat);
+
+        Label lblProduktNavn = new Label("Produktnavn");
+        venstreBundBox.getChildren().add(lblProduktNavn);
+
+        txfNavn.setPromptText("ex: Muld 1.1");
+        venstreBundBox.getChildren().add(txfNavn);
 
         //Bundboxmidt
         //------------------------------------------------------------------------------------------------------------
         VBox midtBundBox = new VBox();
         midtBundBox.setAlignment(Pos.CENTER);
-        midtBundBox.setSpacing(0);
-        grid.add(midtBundBox,1,2);
-
+        midtBundBox.setSpacing(5);
+        samletBoxMidt.getChildren().add(midtBundBox);
 
         Label lblProduktkategoriVariant = new Label("Produkt variant");
-        lblProduktkategoriVariant.setStyle("-fx-font-weight: bold");
         midtBundBox.getChildren().add(lblProduktkategoriVariant);
 
         produktVariantListView = new ListView<>();
@@ -160,49 +210,95 @@ public class ProduktionFane extends Main{
         ChangeListener<ProduktVariant> listenerProduktVariant = (ov, oldString, newString) -> this.selectionChangedProduktionsVariant();
         produktVariantListView.getSelectionModel().selectedItemProperty().addListener(listenerProduktVariant);
 
+        Label lblNone1 = new Label();
+        midtBundBox.getChildren().add(lblNone1);
+
+        Label lblVandindhold = new Label("Vandindhold");
+        midtBundBox.getChildren().add(lblVandindhold);
+
+        txfVandMængde.setPromptText("I liter");
+        midtBundBox.getChildren().add(txfVandMængde);
+
         //HøjreBundBox
         //------------------------------------------------------------------------------------------------------------
         VBox højreBundBox = new VBox();
         højreBundBox.setAlignment(Pos.CENTER);
         højreBundBox.setSpacing(5);
-        grid.add(højreBundBox,2,2);
+        samletBoxMidt.getChildren().add(højreBundBox);
 
-        højreBundBox.getChildren().add(txfNavn);
-        txfNavn.setPromptText("Produktnavn");
-        højreBundBox.getChildren().add(txfVandMængde);
-        txfVandMængde.setPromptText("Vandindhold i liter");
-        højreBundBox.getChildren().add(txfTappetMængdeTilFærdigProdukt);
-        txfTappetMængdeTilFærdigProdukt.setPromptText("Tappet mængde til færdig produkt");
+        Label lblPåfyldteMængderDestillat = new Label("Påfyldte mængder fra fade til færdig produkt");
+        højreBundBox.getChildren().add(lblPåfyldteMængderDestillat);
 
-        //Bund bund
-        //------------------------------------------------------------------------------------------------------------
-//        VBox bundBundBox = new VBox();
-//        bundBundBox.setAlignment(Pos.CENTER);
-//        bundBundBox.setSpacing(0);
-//        grid.add(bundBundBox,0,3);
+        påfyldtMængdeDestillatListview = new ListView<>();
+        højreBundBox.getChildren().add(påfyldtMængdeDestillatListview);
+        påfyldtMængdeDestillatListview.setPrefWidth(300);
+        påfyldtMængdeDestillatListview.setPrefHeight(100);
 
-        Button btnCreateBatch = new Button("Producer batch");
-        grid.add(btnCreateBatch,0,3);
-//        bundBundBox.getChildren().add(btnCreateBatch);
-        btnCreateBatch.setOnAction(event -> createBatchAction());
-        batchVindue = new CreateBatchVindue("Opret Batch", tab);
+        Button btnNulstilFærdigProdukt = new Button("Nulstil");
+        højreBundBox.getChildren().add(btnNulstilFærdigProdukt);
+        btnNulstilFærdigProdukt.setOnAction(event -> nulstilFærdigProduktAction());
+
+        Label lblNone2 = new Label();
+        højreBundBox.getChildren().add(lblNone2);
 
         Button btnCreateFærdigProdukt = new Button("Opret færdig produkt");
-        grid.add(btnCreateFærdigProdukt,2,3);
-//        bundBundBox.getChildren().add(btnCreateFærdigProdukt);
+        højreBundBox.getChildren().add(btnCreateFærdigProdukt);
         btnCreateFærdigProdukt.setOnAction(event -> opretFærdigProduktAction());
+
+        //under boxe starter -->
+
+        //under bundbox
+        //------------------------------------------------------------------------------------------------------------
+        VBox underBundboxVenstre = new VBox();
+        underBundboxVenstre.setAlignment(Pos.CENTER);
+        underBundboxVenstre.setSpacing(0);
+        samletBoxMidt.getChildren().add(underBundboxVenstre);
+
+        VBox underBundboxMidt = new VBox();
+        underBundboxMidt.setAlignment(Pos.CENTER);
+        underBundboxMidt.setSpacing(0);
+        samletBoxMidt.getChildren().add(underBundboxMidt);
+
+        VBox underBundboxHøjre = new VBox();
+        underBundboxHøjre.setAlignment(Pos.CENTER);
+        underBundboxHøjre.setSpacing(0);
+        samletBoxMidt.getChildren().add(underBundboxHøjre);
+
+        //Nederst
+        //------------------------------------------------------------------------------------------------------------
+        Button btnCreateBatch = new Button("Producer batch");
+        grid.add(btnCreateBatch, 0, 4);
+        btnCreateBatch.setOnAction(event -> createBatchAction());
+        batchVindue = new CreateBatchVindue("Opret Batch", tab);
 
         tab.setContent(grid);
         return tab;
     }
 
     //knapfunktion til batch
-    private void createBatchAction(){
+    private void createBatchAction() {
         batchVindue.showAndWait();
-        updateListviewBatch();
+        batchListView.getItems().setAll(Controller.getBatches());
     }
 
-    private List<Batch> batchesMedIndhold(){
+    //knap til at nulstille produktion
+    private void nulstilProduktionAction() {
+        txfDateTimeForOprettelseAfDestillat.clear();
+        batchListView.getSelectionModel().clearSelection();
+        fadListView.getSelectionModel().clearSelection();
+        btnTilføjBatch.setDisable(true);
+    }
+
+    //knap til at nulstille færdigprodukt
+    private void nulstilFærdigProduktAction() {
+        txfVandMængde.clear();
+        produktVariantListView.getSelectionModel().clearSelection();
+        txfNavn.clear();
+        btnTilføjDestillat.setDisable(true);
+    }
+
+    //finder batch med indhold
+    private List<Batch> batchesMedIndhold() {
         List<Batch> batchesMedIndhold = new ArrayList<>();
         for (Batch batch : Controller.getBatches()) {
             if (batch.getMængdeLiter() > 0) {
@@ -212,98 +308,82 @@ public class ProduktionFane extends Main{
         return batchesMedIndhold;
     }
 
-    //opdatere batch listviewet
-    private void updateListviewBatch(){
-        batchListView.getItems().setAll(Controller.getBatches());
-    }
-
-    //opdatere fadeview
-    private void updateListviewFade(){
-        fadListView.getItems().setAll(Controller.getFade());
-    }
-
-    //opdatere fadeMin3AarPåLagerView
-    private void updateListviewFadeMin3AarPåLager(){
-        fadMin3AarView.getItems().setAll(getFadePaaLagerIMin3Aar());
-    }
-
     //hvilket item du har valgt i produktionsvariationView
-    private void selectionChangedProduktionsVariant(){
+    private void selectionChangedProduktionsVariant() {
         produktVariantListView.getSelectionModel().getSelectedItem();
     }
 
     //hvilket item du har valgt i fadeView
-    private void selectionChangedFade(){
+    private void selectionChangedFade() {
         fadListView.getSelectionModel().getSelectedItem();
     }
 
     //hvilket batch du har valgt i batchView
-    private void selectionChangedBatch(){
+    private void selectionChangedBatch() {
         batchListView.getSelectionModel().getSelectedItem();
+        btnTilføjBatch.setDisable(false);
     }
 
     //hvilket item i fademin3årView du har valgt
-    private void selectionChangedFadeMin3Aar(){
-        fadMin3AarView.getSelectionModel().getSelectedItem();
+    private void selectionChangedDestillatMin3år() {
+        destillatMin3årListView.getSelectionModel().getSelectedItem();
+        btnTilføjDestillat.setDisable(false);
     }
 
-    //finder fade på laager i min 3 år
-    //TODO skal det her være i GUI eller i Controller??
-    private List<Fad> getFadePaaLagerIMin3Aar(){
+    //finder destillat på lager i min 3 år
+    private List<Destillat> getDestillaterPåLagerMin3År() {
         LocalDateTime treÅrSiden = LocalDateTime.now().minusYears(3);
-        List<Fad> fadeMin3År = new ArrayList<>();
+        List<Destillat> destillatMin3År = new ArrayList<>();
+        System.out.println(Controller.getDestillater());
         for (Destillat destillat : Controller.getDestillater()) {
-            destillat.getDatoForPåfyldning();
             if (destillat.getDatoForPåfyldning().isBefore(treÅrSiden)) {
-                fadeMin3År.add(destillat.getFad());
+                destillatMin3År.add(destillat);
             }
         }
-        return fadeMin3År;
+        return destillatMin3År;
+    }
+
+    //action til tilføj mængde
+    private <T> void createPåfyldningVindue(T type) {
+        try {
+            if (type instanceof Destillat) {
+                påfyldningsVindue = new PåfyldningsVindue("Destillat påfyldning", type);
+                påfyldningsVindue.showAndWait();
+                if (påfyldningsVindue.getDm() != null) {
+                    påfyldtMængdeDestillatListview.getItems().add(påfyldningsVindue.getDm());
+                }
+            } else if (type instanceof Batch) {
+                påfyldningsVindue = new PåfyldningsVindue("Batch påfyldning", type);
+                påfyldningsVindue.showAndWait();
+                if (påfyldningsVindue.getBm() != null) {
+                    påfyldtMængdeBatchListview.getItems().add(påfyldningsVindue.getBm());
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            showAlert("Fejl", "Fejl under oprettelse", e.getMessage());
+        }
     }
 
     //action til påfyld fad knap
-    //TODO mangler at laves
-    private void påfyldMængdeAction(){
+    private void påfyldMængdeAction() {
         try {
-            double mændge = Double.parseDouble(txfPåfyldtMængdePåFad.getText().trim());
-            Fad valgtFadMedDestillat = fadListView.getSelectionModel().getSelectedItem();
-            Batch valgtBatch = batchListView.getSelectionModel().getSelectedItem();
-            LocalDateTime tidspunkt = LocalDateTime.parse(txfDateTimeForOprettelseAfDestillat.getText().trim());
-            Destillat toBeAdded = Controller.createDestillat(tidspunkt,valgtFadMedDestillat);
+            LocalDateTime dato = LocalDateTime.parse(txfDateTimeForOprettelseAfDestillat.getText().trim());
+            Controller.createDestillat(dato, fadListView.getSelectionModel().getSelectedItem(), påfyldtMængdeBatchListview.getItems());
+            nulstilProduktionAction();
         } catch (Exception e) {
             showAlert("Fejl", "Fejl under påfyldning af fad", e.getMessage());
         }
-        updateListviewBatch();
-        updateListviewFade();
-        updateListviewFadeMin3AarPåLager();
     }
 
     //action til opretfærdig produkt
-    //TODO mangler exceptions!
-    //mangler at håndtere exceptions i GUI, da det ikke er lavet i controlleren.
-    private void opretFærdigProduktAction(){
+    private void opretFærdigProduktAction() {
         try {
-            String navn = txfNavn.getText().trim();
-            double vandMængde = Double.parseDouble(txfVandMængde.getText().trim());
-            double tappetLiter = Double.parseDouble(txfTappetMængdeTilFærdigProdukt.getText().trim());
-            ProduktVariant valgteProduktVariation = produktVariantListView.getSelectionModel().getSelectedItem();
-            FærdigProdukt returProdukt = Controller.createFærdigProdukt(navn,valgteProduktVariation, vandMængde);
-            Fad valgteFadMin3Aar = fadMin3AarView.getSelectionModel().getSelectedItem();
-            cleartxfFields();
-            updateListviewFade();
-            updateListviewFade();
-            updateListviewFadeMin3AarPåLager();
-            showAlert("Produktet er oprettet", "Produktet er oprettet", "Du har oprettet produktet: " + returProdukt);
+            double vandmængde = Double.parseDouble(txfVandMængde.getText().trim());
+            Controller.createFærdigProdukt(txfNavn.getText().trim(), produktVariantListView.getSelectionModel().getSelectedItem(), vandmængde, påfyldtMængdeDestillatListview.getItems());
+            nulstilFærdigProduktAction();
         } catch (Exception e) {
             showAlert("Fejl", "Fejl under oprettelse af færdig produkt", "!!WTF der er ikke håndteret exceptions i controlleren!!");
         }
-    }
-
-    //clear alle tekstfelter
-    private void cleartxfFields(){
-        txfNavn.clear();
-        txfVandMængde.clear();
-        produktVariantListView.getSelectionModel().clearSelection();
     }
 
     //viser alert
@@ -313,30 +393,5 @@ public class ProduktionFane extends Main{
         alert.setHeaderText(headerText);
         alert.setContentText(contentText);
         alert.showAndWait();
-    }
-
-    /**
-     * Metode som bruges til at inddele fadene i fadlisten efter farver,
-     * så brugeren har bedre overblik over fad status
-     *
-     * @param fad
-     * @return hexcode for den farve som Fadet i listen skal have
-     */
-    private static String getFadColorFromCapacity(Fad fad) {
-        if (fad.getDestillat() == null) {
-            return "#AAFFAA";
-        }
-
-        double fullCapacity = fad.getStørrelseLiter();
-        double destillatAmount = fad.getDestillat().getFaktiskMængdeLiter();
-        double remainingCapacity = fullCapacity - destillatAmount;
-
-        if (remainingCapacity == 0) {
-            return "#FFAAAA";
-        } else if (remainingCapacity > 0 && remainingCapacity < fullCapacity) {
-            return "#FFFFAA";
-        } else {
-            return "#AAFFAA";
-        }
     }
 }

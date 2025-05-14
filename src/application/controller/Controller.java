@@ -128,9 +128,19 @@ public abstract class Controller {
             destillatToAdd.addPåfyldteMængder(batchMængde);
             batchMængde.getBatch().tapMængdeLiter(batchMængde.getMængdeILiter());
         }
+        storage.addDestillat(destillatToAdd);
         return destillatToAdd;
     }
 
+    public static void removeDestillat(Destillat destillat) {
+        storage.removeDestillat(destillat);
+    }
+
+    public static List<Destillat> getDestillater() {
+        return storage.getDestillater();
+    }
+
+    //Batch mængde
     /**
      * Opretter og gemmer en Batchmængde
      *
@@ -156,14 +166,6 @@ public abstract class Controller {
         return BatchMængdeToBeAdded;
     }
 
-    public static void removeDestillat(Destillat destillat) {
-        storage.removeDestillat(destillat);
-    }
-
-    public static List<Destillat> getDestillater() {
-        return storage.getDestillater();
-    }
-
     //Destillat mængde
     /**
      * Opretter og gemmer destillatmængde
@@ -187,6 +189,8 @@ public abstract class Controller {
         destillat.tapMængdeLiter(mængdeLiter);
         return DestillatMængdeToAdded;
     }
+
+
 
 
     //Lager
