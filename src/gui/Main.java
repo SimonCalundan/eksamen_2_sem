@@ -26,7 +26,7 @@ public class Main extends Application {
 
         //-----------------------------------------------------------------
 
-        Scene scene = new Scene(tabPane, 855, 600);
+        Scene scene = new Scene(tabPane, 855, 750);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Sall Whisky");
         primaryStage.show();
