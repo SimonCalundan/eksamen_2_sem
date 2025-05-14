@@ -1,12 +1,16 @@
 package gui;
 
 import application.controller.Controller;
+import application.model.BatchMængde;
+import application.model.DestillatMængde;
 import javafx.application.Application;
 import storage.ListStorage;
 import storage.Storage;
 
 import java.io.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class App {
     public static void main(String[] args) {
@@ -80,8 +84,8 @@ public class App {
         var hylde4A = Controller.createHylde(reol4, "øverst");
         var hylde4B = Controller.createHylde(reol4, "nederst");
 
-        Controller.createFad(320.0, "Anders", "Eg", 5, hylde3A);
-        Controller.createFad(260.0, "Lise", "Ask", 2, hylde3B);
+        var fad1 = Controller.createFad(320.0, "Anders", "Eg", 5, hylde3A);
+        var fad2 = Controller.createFad(260.0, "Lise", "Ask", 2, hylde3B);
         Controller.createFad(210.0, "Jonas", "Birk", 1, hylde4A);
         Controller.createFad(195.0, "Emilie", "Eg", 3, hylde4B);
         Controller.createFad(400.0, "Niels", "Teak", 6, hylde4B);
@@ -93,8 +97,10 @@ public class App {
         Controller.createBatch("B4/2023",60,0.25);
         Controller.createBatch("B6/2024",90,0.65);
 
-        var destillatD1 = Controller.createDestillat(LocalDateTime.of(2020,6,11,10,30), fadTilD1);
-        var destillatD2 = Controller.createDestillat(LocalDateTime.of(2021,5,5,12,12),fadTilD2);
+        List<BatchMængde> bm1 = new ArrayList<>();
+        bm1.add(Controller.createBatchMængde(batch1, 10));
+        bm1.add( Controller.createBatchMængde(batch2,30));
+        Controller.createDestillat(LocalDateTime.of(2000,3,14,10,12),fad1,bm1);
 
         // Evt. logning
         System.out.println("Lagre og fade er initialiseret.");
