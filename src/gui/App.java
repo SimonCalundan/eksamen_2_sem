@@ -23,6 +23,10 @@ public class App {
         initStorage();
         Application.launch(MainFane.class);
         saveStorage(storage);
+
+        for (var d : Controller.getDestillater())  {
+            System.out.println(d.getFaktiskAlkoholProcent());
+        }
     }
 
     public static Storage loadStorage() {

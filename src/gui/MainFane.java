@@ -16,9 +16,10 @@ public class MainFane extends Application {
         Tab produktionTab = new ProduktionFane().getTab();
         Tab fadTab = new FadFane().getTab();
         Tab lagerTab = new LagerFane().getTab();
+        Tab færdigProduktTab = new FærdigProduktFane().getTab();
 
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-        tabPane.getTabs().addAll(produktionTab, fadTab, lagerTab);
+        tabPane.getTabs().addAll(produktionTab, fadTab, lagerTab, færdigProduktTab);
 
         int antalTabs = tabPane.getTabs().size();
         double tabWidth = 800.0 / antalTabs;

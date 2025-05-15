@@ -75,7 +75,7 @@ public class Destillat implements Serializable {
             //egentlig alkoholprocent og total mængde i liter
             double totalAlkoholMængde = faktiskMængdeLiter * faktiskAlkoholProcent + påfyldtMængde.getMængdeILiter() * påfyldtMængde.getBatch().getAlkoholProcent();
             faktiskMængdeLiter += påfyldtMængde.getMængdeILiter();
-            faktiskAlkoholProcent += totalAlkoholMængde / faktiskMængdeLiter;
+            faktiskAlkoholProcent = totalAlkoholMængde / faktiskMængdeLiter;
         }
     }
 
