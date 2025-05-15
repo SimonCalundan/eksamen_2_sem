@@ -13,6 +13,7 @@ public class CreateBatchVindue extends Stage {
     private TextField txfNavn = new TextField();
     private TextField txfMængdeILiter = new TextField();
     private TextField txfAlkoholProcent = new TextField();
+    private TextField txfMark = new TextField();
 
     public CreateBatchVindue(String title, Tab tab) {
         this.setTitle(title);
@@ -38,12 +39,16 @@ public class CreateBatchVindue extends Stage {
 
         grid.add(txfAlkoholProcent,1,2);
 
+        Label lblMark = new Label("Mark");
+        grid.add(lblMark, 0, 3);
+        grid.add(txfMark, 1, 3);
+
         Button btnCreateBatch = new Button("Godkend");
-        grid.add(btnCreateBatch,0,3);
+        grid.add(btnCreateBatch,0,4);
         btnCreateBatch.setOnAction(event -> this.createBatch());
 
         Button btnLuk = new Button("Luk");
-        grid.add(btnLuk,1,3);
+        grid.add(btnLuk,1,4);
         btnLuk.setOnAction(event -> this.closeWindow());
 
         Scene scene = new Scene(grid, 300, 200);
@@ -55,11 +60,12 @@ public class CreateBatchVindue extends Stage {
     private void createBatch() {
         try {
             String navn = txfNavn.getText().trim();
+            String mark  = txfMark.getText().trim();
             double mængdeILiter;
             double alkoholProcent;
             mængdeILiter = Double.parseDouble(txfMængdeILiter.getText().trim());
             alkoholProcent = Double.parseDouble(txfAlkoholProcent.getText().trim());
-            Controller.createBatch(navn,mængdeILiter,alkoholProcent);
+            Controller.createBatch(navn,mængdeILiter,alkoholProcent, mark);
             closeWindow();
             hide();
         } catch (NumberFormatException e) {

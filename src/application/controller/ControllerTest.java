@@ -33,8 +33,8 @@ class ControllerTest {
         var fad = Controller.createFad(40.0, "Simon", "Eg", 2, hylde);
         // TC1 - gyldig
         {
-            Batch b1 = Controller.createBatch("B1", 30, 0.7);
-            Batch b2 = Controller.createBatch("B2", 70, 0.6);
+            Batch b1 = Controller.createBatch("B1", 30, 0.7, "Sall");
+            Batch b2 = Controller.createBatch("B2", 70, 0.6, "Sall");
             List<BatchMængde> bmList = new ArrayList<>(List.of(
                     Controller.createBatchMængde(b1, 30),
                     Controller.createBatchMængde(b2, 70)
@@ -51,8 +51,8 @@ class ControllerTest {
         }
         // TC2 - gyldig
         {
-            Batch b1 = Controller.createBatch("B1", 30, 0.7);
-            Batch b2 = Controller.createBatch("B2", 70, 0.6);
+            Batch b1 = Controller.createBatch("B1", 30, 0.7, "Sall");
+            Batch b2 = Controller.createBatch("B2", 70, 0.6, "Sall");
             List<BatchMængde> bmList = new ArrayList<>(List.of(
                     Controller.createBatchMængde(b1, 30),
                     Controller.createBatchMængde(b2, 70)
@@ -69,8 +69,8 @@ class ControllerTest {
         }
         // TC3 - ugyldig (datoForPåfyldning = nu + 1 sekund)
         {
-            Batch b1 = Controller.createBatch("B1", 30, 0.7);
-            Batch b2 = Controller.createBatch("B2", 70, 0.6);
+            Batch b1 = Controller.createBatch("B1", 30, 0.7, "Sall");
+            Batch b2 = Controller.createBatch("B2", 70, 0.6, "Sall");
             List<BatchMængde> bmList = new ArrayList<>(List.of(
                     Controller.createBatchMængde(b1, 30),
                     Controller.createBatchMængde(b2, 70)
@@ -84,8 +84,8 @@ class ControllerTest {
         }
         // TC4 - ugyldig (fad er null)
         {
-            Batch b1 = Controller.createBatch("B1", 30, 0.7);
-            Batch b2 = Controller.createBatch("B2", 70, 0.6);
+            Batch b1 = Controller.createBatch("B1", 30, 0.7, "Sall");
+            Batch b2 = Controller.createBatch("B2", 70, 0.6, "Sall");
             List<BatchMængde> bmList = new ArrayList<>(List.of(
                     Controller.createBatchMængde(b1, 30),
                     Controller.createBatchMængde(b2, 70)
@@ -99,8 +99,8 @@ class ControllerTest {
         }
         // TC5 - ugyldig (datoForPåfyldning = nu + 5 dage)
         {
-            Batch b1 = Controller.createBatch("B1", 30, 0.7);
-            Batch b2 = Controller.createBatch("B2", 70, 0.6);
+            Batch b1 = Controller.createBatch("B1", 30, 0.7, "Sall");
+            Batch b2 = Controller.createBatch("B2", 70, 0.6, "Sall");
             List<BatchMængde> bmList = new ArrayList<>(List.of(
                     Controller.createBatchMængde(b1, 30),
                     Controller.createBatchMængde(b2, 70)
@@ -128,7 +128,7 @@ class ControllerTest {
     @Test
     void createBatchMængde() {
         var fad = Controller.createFad(0.5, "Testleverandør", "Eg", 2, hylde);
-        var batch = Controller.createBatch("TestBatch", 30, 0.6);
+        var batch = Controller.createBatch("TestBatch", 30, 0.6, "Sall");
 
         // TC1 - grænseværdi (mængdePåfyldt = 0.1)
         {
@@ -236,7 +236,8 @@ class ControllerTest {
             String navn = "TestBatch";
             double mængdeLiter = 0.5;
             double alkoholProcent = 0.10;
-            Controller.createBatch(navn, mængdeLiter, alkoholProcent);
+            String mark = "Sall";
+            Controller.createBatch(navn, mængdeLiter, alkoholProcent, mark);
             Batch batch = Controller.getBatches().getLast();
             assertAll(
                     () -> assertEquals(navn, batch.getNavn()),
@@ -248,7 +249,8 @@ class ControllerTest {
             String navn = "TestBatch";
             double mængdeLiter = 12.0;
             double alkoholProcent = 0.6;
-            Controller.createBatch(navn, mængdeLiter, alkoholProcent);
+            String mark = "Sall";
+            Controller.createBatch(navn, mængdeLiter, alkoholProcent, mark);
             Batch batch = Controller.getBatches().getLast();
             assertAll(
                     () -> assertEquals(navn, batch.getNavn()),
@@ -260,7 +262,8 @@ class ControllerTest {
             String navn = "TestBatch";
             double mængdeLiter = 12.0;
             double alkoholProcent = 0;
-            Controller.createBatch(navn, mængdeLiter, alkoholProcent);
+            String mark = "Sall";
+            Controller.createBatch(navn, mængdeLiter, alkoholProcent, mark);
             Batch batch = Controller.getBatches().getLast();
             assertAll(
                     () -> assertEquals(navn, batch.getNavn()),
@@ -272,8 +275,9 @@ class ControllerTest {
             String navn = "TestBatch";
             double mængdeLiter = -3.1;
             double alkoholProcent = 0.6;
+            String mark = "Sall";
             Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                Controller.createBatch(navn, mængdeLiter, alkoholProcent);
+                Controller.createBatch(navn, mængdeLiter, alkoholProcent, mark);
             });
             assertEquals("mængdeLiter må ikke være mindre en 0", exception.getMessage(), "TC4 - ugyldig værdi (mængdeLiter = -3.1)");
         }
@@ -282,8 +286,9 @@ class ControllerTest {
             String navn = "TestBatch";
             double mængdeLiter = 10.5;
             double alkoholProcent = -0.3;
+            String mark = "Sall";
             Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                Controller.createBatch(navn, mængdeLiter, alkoholProcent);
+                Controller.createBatch(navn, mængdeLiter, alkoholProcent, mark);
             });
             assertEquals("alkoholProcent må ikke være mindre en 0 eller større end 1", exception.getMessage(), "TC4 - ugyldig værdi (mængdeLiter = -3.1)");
         }
@@ -313,7 +318,7 @@ class ControllerTest {
 
         // TC1 - Grænseværdi (vandMænggde = 0)
         {
-            var batch = Controller.createBatch("B1", 30.0, 0.6);
+            var batch = Controller.createBatch("B1", 30.0, 0.6, "Sall");
             var bm = Controller.createBatchMængde(batch, 30.0);
             var destillat = Controller.createDestillat(
                     LocalDateTime.now(), fad, List.of(bm));
@@ -341,7 +346,7 @@ class ControllerTest {
         }
         // TC2
         {
-            var batch = Controller.createBatch("B1", 30.0, 0.6);
+            var batch = Controller.createBatch("B1", 30.0, 0.6, "Sall");
             var bm = Controller.createBatchMængde(batch, 30.0);
             var destillat = Controller.createDestillat(
                     LocalDateTime.now(), fad, List.of(bm));
@@ -368,7 +373,7 @@ class ControllerTest {
         }
         // TC3 - ugyldig værdi (vandMængde = -30.0)
         {
-            var batch = Controller.createBatch("B1", 30.0, 0.6);
+            var batch = Controller.createBatch("B1", 30.0, 0.6, "Sall");
             var bm = Controller.createBatchMængde(batch, 30.0);
             var destillat = Controller.createDestillat(
                     LocalDateTime.now(), fad, List.of(bm));
@@ -389,7 +394,7 @@ class ControllerTest {
                 40.0, "Peter", "Eg",
                 3, hylde);
 
-        var batch = Controller.createBatch("Simons Batch", 40, 0.6);
+        var batch = Controller.createBatch("Simons Batch", 40, 0.6, "Sall");
         List<BatchMængde> batchMængdeList = new ArrayList<>(List.of(
                 Controller.createBatchMængde(batch, 40)
         ));

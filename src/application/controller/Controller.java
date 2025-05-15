@@ -4,7 +4,7 @@ import application.model.*;
 import storage.Storage;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 
 public abstract class Controller {
     private static Storage storage;
@@ -28,7 +28,7 @@ public abstract class Controller {
      * @throws IllegalArgumentException hvis mængdeILiter er mindre eller lig med 0,
      *                                  alkoholProcent ikke er mellem 0 og 1 eller hvis navn input er tomt
      */
-    public static Batch createBatch(String navn, double mængdeILiter, double alkoholProcent) throws IllegalArgumentException {
+    public static Batch createBatch(String navn, double mængdeILiter, double alkoholProcent, String mark) throws IllegalArgumentException {
         if (mængdeILiter <= 0) {
             throw new IllegalArgumentException("mængdeLiter må ikke være mindre en 0");
         }
@@ -38,7 +38,7 @@ public abstract class Controller {
         if (navn.isBlank()) {
             throw new IllegalArgumentException("Navn må ikke være tomt");
         }
-        var batchToAdd = new Batch(navn, mængdeILiter, alkoholProcent);
+        var batchToAdd = new Batch(navn, mængdeILiter, alkoholProcent, mark);
         storage.addBatch(batchToAdd);
         return batchToAdd;
     }
@@ -105,12 +105,13 @@ public abstract class Controller {
     }
 
     //Destillat
+
     /**
      * Opretter et Destillat objekt
      *
      * @param datoForPåfyldning Tidspunktet hvor påfyldningen fandt sted
      * @param fad               det fad som destillatet skal være på
-     * @param batchMængder batchmængder som destillatet består af
+     * @param batchMængder      batchmængder som destillatet består af
      * @return Destillat objektet som oprettes
      * @throws IllegalArgumentException hvis dateForPåfyldning er efter nuværende tidspunkt
      *                                  eller at Fad er null
@@ -123,7 +124,7 @@ public abstract class Controller {
         if (fad == null) {
             throw new IllegalArgumentException("Fad må ikke være null");
         }
-        if (batchMængder.isEmpty()){
+        if (batchMængder.isEmpty()) {
             throw new IllegalArgumentException("batchMængder må ikke være tom");
         }
         var destillatToAdd = new Destillat(datoForPåfyldning, fad);
@@ -144,6 +145,7 @@ public abstract class Controller {
     }
 
     //Batch mængde
+
     /**
      * Opretter og gemmer en Batchmængde
      *
@@ -193,8 +195,6 @@ public abstract class Controller {
         var DestillatMængdeToAdded = new DestillatMængde(mængdeLiter, destillat);
         return DestillatMængdeToAdded;
     }
-
-
 
 
     //Lager
@@ -269,9 +269,9 @@ public abstract class Controller {
     /**
      * Opretter og gemmer færdig produkt
      *
-     * @param navn       det færdige produkts navn
-     * @param type       valg af type (gin eller whisky)
-     * @param vandMængde hvor meget vand der skal tilføjes til produktet
+     * @param navn             det færdige produkts navn
+     * @param type             valg af type (gin eller whisky)
+     * @param vandMængde       hvor meget vand der skal tilføjes til produktet
      * @param destillatMængder liste af destillatMænger der udgør det færdige produkt
      * @return FærdigeProdukt objektet
      * @throws IllegalArgumentException hvis navn er tomt, hvis type er null og hvis vandmængde er < 0
@@ -286,7 +286,7 @@ public abstract class Controller {
         if (vandMængde < 0) {
             throw new IllegalArgumentException("vandMængde må ikke være mindre end 0");
         }
-        if (destillatMængder.isEmpty()){
+        if (destillatMængder.isEmpty()) {
             throw new IllegalArgumentException("DestillatMængder må ikke være tom");
         }
         var færdigProduktToAdd = new FærdigProdukt(navn, type, vandMængde);
@@ -296,6 +296,85 @@ public abstract class Controller {
             destillatMængde.getDestillat().tapMængdeLiter(destillatMængde.getMængdeLiter());
         }
         return færdigProduktToAdd;
+    }
+
+    /**
+     * Returnerer en String af det inputtede produkts historik
+     *
+     * @param færdigProdukt
+     * @return String med historik
+     * @author Simon Kidde Calundan
+     */
+    public static String getFærdigProduktHistorik(FærdigProdukt færdigProdukt) {
+        List<DestillatMængde> destillatMængder = new ArrayList<>();
+        List<BatchMængde> batchMængder = new ArrayList<>();
+        List<Fad> fade = new ArrayList<>();
+        LocalDateTime firstDate = null;
+
+        for (DestillatMængde mængde : færdigProdukt.getTappetmængder()) {
+            Destillat destillat = mængde.getDestillat();
+
+            destillatMængder.add(mængde);
+
+            batchMængder.addAll(destillat.getPåfyldteMængder());
+
+            fade.add(destillat.getFad());
+
+            LocalDateTime dato = destillat.getDatoForPåfyldning();
+            if (firstDate == null || dato.isBefore(firstDate)) {
+                firstDate = dato;
+            }
+        }
+
+        StringBuilder sb = new StringBuilder("Historik for " + færdigProdukt.getNavn() + "\n");
+
+        sb.append("""
+                
+                ==============================
+                Destillater
+                ==============================
+                """);
+        sb.append("%-15s %-15s %-15s %n".formatted("Andel i Liter", "Alkohol %", "Dato for påfyldning"));
+        destillatMængder.forEach(dm -> {
+            String s = "%-15.2f %-15.2f %-15s %n"
+                    .formatted(dm.getMængdeLiter(),
+                            dm.getDestillat().getFaktiskAlkoholProcent(),
+                            dm.getDestillat().getDatoForPåfyldning());
+            sb.append(s);
+        });
+
+        sb.append("""
+                
+                ==============================
+                Fade
+                ==============================
+                """);
+        sb.append("%-15s %-15s %-15s %-15s %n".formatted("Størrelse", "Leverandør", "Træsort", "Gange brugt"));
+        fade.forEach(fad -> {
+            String s = "%-15.2f %-15s %-15s %-15d %n"
+                    .formatted(fad.getStørrelseLiter(), fad.getLeverandør(),
+                            fad.getTræsort(), fad.getBrugtGange());
+            sb.append(s);
+        });
+
+        sb.append("""
+                
+                ==============================
+                Batches
+                ==============================
+                """);
+        sb.append("%-15s %-15s %-15s %-15s %n".formatted("Navn", "Andel i liter", "alkohol %", "Mark"));
+        batchMængder.forEach(bm -> {
+            String s = "%-15s %-15.2f %-15.2f %-15s %n".formatted(
+                    bm.getBatch().getNavn(),
+                    bm.getMængdeILiter(), bm.getBatch().getAlkoholProcent(),
+                    bm.getBatch().getMark()
+            );
+            sb.append(s);
+        });
+        sb.append("\nProduktions start: " + firstDate + "\n");
+
+        return sb.toString();
     }
 
     public static List<FærdigProdukt> getFærdigProdukter() {
