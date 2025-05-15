@@ -33,7 +33,7 @@ class DestillatTest {
 
     @Test
     void tapMængdeLiter() {
-        var batch = new Batch("Simons Batch", 30.0, 0.6);
+        var batch = new Batch("Simons Batch", 30.0, 0.6, "Sall");
         BatchMængde pm = new BatchMængde(30.0, batch);
         var d = new Destillat(LocalDateTime.now(), fad);
         double tappetMængde = 30.0;
@@ -46,7 +46,7 @@ class DestillatTest {
 
     @Test
     void addPåfyldteMængder() {
-        var batch = new Batch("Simons Batch", 30.0, 0.6);
+        var batch = new Batch("Simons Batch", 30.0, 0.6, "Sall");
         BatchMængde pm = new BatchMængde(30.0, batch);
         var d = new Destillat(LocalDateTime.now(), fad);
 
@@ -57,7 +57,7 @@ class DestillatTest {
 
     @Test
     void removePåfyldtMængde() {
-        var batch = new Batch("Simons Batch", 30.0, 0.6);
+        var batch = new Batch("Simons Batch", 30.0, 0.6, "Sall");
         BatchMængde pm = new BatchMængde(30.0, batch);
         var d = new Destillat(LocalDateTime.now(), fad);
 
@@ -69,7 +69,7 @@ class DestillatTest {
 
     @Test
     void getDatoForPåfyldning() {
-        var batch = new Batch("Simons Batch", 30.0, 0.6);
+        var batch = new Batch("Simons Batch", 30.0, 0.6, "Sall");
         BatchMængde pm = new BatchMængde(30.0, batch);
         LocalDateTime expectedTidspunkt = LocalDateTime
                 .of(2025, 1, 1, 1, 1);
@@ -81,7 +81,7 @@ class DestillatTest {
 
     @Test
     void getFaktiskMængdeLiter() {
-        var batch = new Batch("Simons Batch", 30.0, 0.6);
+        var batch = new Batch("Simons Batch", 30.0, 0.6, "Sall");
         BatchMængde pm = new BatchMængde(30.0, batch);
         var d = new Destillat(LocalDateTime.now(), fad);
         d.addPåfyldteMængder(pm);
@@ -93,7 +93,7 @@ class DestillatTest {
 
     @Test
     void getFaktiskAlkoholProcent() {
-        var batch = new Batch("Simons Batch", 30.0, 0.6);
+        var batch = new Batch("Simons Batch", 30.0, 0.6, "Sall");
         BatchMængde pm = new BatchMængde(30.0, batch);
         var d = new Destillat(LocalDateTime.now(), fad);
         d.addPåfyldteMængder(pm);
@@ -106,7 +106,7 @@ class DestillatTest {
 
     @Test
     void getPåfyldteMængder() {
-        var batch = new Batch("Simons Batch", 30.0, 0.6);
+        var batch = new Batch("Simons Batch", 30.0, 0.6, "Sall");
         BatchMængde pm = new BatchMængde(30.0, batch);
         var d = new Destillat(LocalDateTime.now(), fad);
         d.addPåfyldteMængder(pm);
@@ -116,7 +116,7 @@ class DestillatTest {
 
     @Test
     void getFad() {
-        var batch = new Batch("Simons Batch", 30.0, 0.6);
+        var batch = new Batch("Simons Batch", 30.0, 0.6, "Sall");
         BatchMængde pm = new BatchMængde(30.0, batch);
         var d = new Destillat(LocalDateTime.now(), fad);
 

@@ -2,6 +2,7 @@ package gui;
 
 import application.controller.Controller;
 import application.model.BatchMængde;
+import application.model.FærdigProdukt;
 import javafx.application.Application;
 import storage.ListStorage;
 import storage.Storage;
@@ -89,17 +90,22 @@ public class App {
         Controller.createFad(195.0, "Emilie", "Eg", 3, hylde4B);
         Controller.createFad(400.0, "Niels", "Teak", 6, hylde4B);
 
-        var batch1 = Controller.createBatch("B1/2020",20,0.5);
-        var batch2 = Controller.createBatch("B2/2021",40,0.45);
-        Controller.createBatch("B3/2021",50,0.35);
-        Controller.createBatch("B4/2022",30,0.30);
-        Controller.createBatch("B4/2023",60,0.25);
-        Controller.createBatch("B6/2024",90,0.65);
+        var batch1 = Controller.createBatch("B1/2020",20,0.5, "Sall");
+        var batch2 = Controller.createBatch("B2/2021",40,0.45, "Sall");
+        Controller.createBatch("B3/2021",50,0.35, "Sall");
+        Controller.createBatch("B4/2022",30,0.30, "Sall");
+        Controller.createBatch("B4/2023",60,0.25, "Sall");
+        Controller.createBatch("B6/2024",90,0.65, "Sall");
 
         List<BatchMængde> bm1 = new ArrayList<>();
         bm1.add(Controller.createBatchMængde(batch1, 10));
         bm1.add( Controller.createBatchMængde(batch2,30));
         Controller.createDestillat(LocalDateTime.of(2000,3,14,10,12),fad1,bm1);
+        List<FærdigProdukt> fpList = Controller.getFærdigProdukter();
+        System.out.println(fpList);
+        if (!fpList.isEmpty()){
+            System.out.println(Controller.getFærdigProduktHistorik(fpList.getFirst()));
+        }
 
         // Evt. logning
         System.out.println("Lagre og fade er initialiseret.");
