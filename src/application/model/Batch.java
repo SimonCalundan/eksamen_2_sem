@@ -6,6 +6,7 @@ public class Batch implements Serializable {
     private String navn;
     private double mængdeLiter;
     private double alkoholProcent;
+    private String mark;
 
     /**
      * Pre: mængdeLiter > 0 og  1 > alkoholProcent > 0
@@ -13,10 +14,11 @@ public class Batch implements Serializable {
      * @param mængdeLiter
      * @param alkoholProcent
      */
-    public Batch(String navn, double mængdeLiter, double alkoholProcent) {
+    public Batch(String navn, double mængdeLiter, double alkoholProcent, String mark) {
         this.navn = navn;
         this.mængdeLiter = mængdeLiter;
         this.alkoholProcent = alkoholProcent;
+        this.mark = mark;
     }
 
     public String getNavn() {
@@ -37,6 +39,10 @@ public class Batch implements Serializable {
 
     public double getAlkoholProcent() {
         return alkoholProcent;
+    }
+
+    public String getMark() {
+        return mark;
     }
 
     @Override
