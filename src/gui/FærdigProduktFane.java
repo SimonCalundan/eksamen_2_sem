@@ -9,6 +9,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
 
 public class FærdigProduktFane extends MainFane {
 
@@ -37,6 +38,8 @@ public class FærdigProduktFane extends MainFane {
         grid.add(infoLabel, 1, 0);
 
         taProduktInfo = new TextArea();
+        taProduktInfo.setEditable(false);
+        taProduktInfo.setPrefWidth(550);
         grid.add(taProduktInfo, 1, 1);
 
         //PRODUKTHISTORIK
@@ -44,6 +47,9 @@ public class FærdigProduktFane extends MainFane {
         grid.add(historikLabel, 1, 2);
 
         taProduktHistorik = new TextArea();
+        taProduktHistorik.setEditable(false);
+        taProduktHistorik.setPrefWidth(550);
+        taProduktHistorik.setFont(Font.font("Monospaced", 12));
         grid.add(taProduktHistorik, 1, 3);
 
         //programmet går ned når man hopper fra din fane til en anden.

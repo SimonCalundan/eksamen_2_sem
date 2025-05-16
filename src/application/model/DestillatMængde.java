@@ -21,6 +21,6 @@ public class DestillatMængde implements Serializable {
     }
 
     public String toString(){
-        return "Mængde: " + this.mængdeLiter + " af destillat: " + this.destillat;
+        return String.format("Mængde: %.2f%s", mængdeLiter, " liter") + " af destillat: " + this.destillat;
     }
 }

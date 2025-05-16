@@ -119,14 +119,12 @@ public class ProduktionFane extends MainFane {
         Label lbldato = new Label("Dato for påfyldning");
         midterBoxTop.getChildren().add(lbldato);
 
-        //TODO jeg kan ikke få det her lort til at blive parset korrekt!
         midterBoxTop.getChildren().add(txfDateTimeForOprettelseAfDestillat);
         txfDateTimeForOprettelseAfDestillat.setPromptText("ex: 2020-12-03T10:15:30");
 
         Label lblDatoFormat = new Label("yyyy-mm-ddThh:mm:ss");
         lblDatoFormat.setStyle("-fx-font-style: italic;");
         midterBoxTop.getChildren().add(lblDatoFormat);
-
 
         //Højrebox
         //------------------------------------------------------------------------------------------------------------

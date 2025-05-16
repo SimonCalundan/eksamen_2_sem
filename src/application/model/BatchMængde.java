@@ -13,7 +13,7 @@ public class BatchMængde implements Serializable {
     }
 
     public String toString() {
-        return "Mængde: " + this.mængdeILiter + " af batch: " + this.batch;
+        return String.format("Mængde: %.2f %s",mængdeILiter, " liter") + " af batch: " + this.batch;
     }
 
     //linkmetoder

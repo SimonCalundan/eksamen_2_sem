@@ -27,7 +27,7 @@ public class MainFane extends Application {
 
         //-----------------------------------------------------------------
 
-        Scene scene = new Scene(tabPane, 855, 750);
+        Scene scene = new Scene(tabPane, 875, 750);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Sall Whisky");
         primaryStage.show();
