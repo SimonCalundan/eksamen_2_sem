@@ -57,6 +57,6 @@ public class Batch implements Serializable {
                 "\nMængde: %s" +" liter" +
                 "\nAlkoholprocent: %.2f%s" +
                 "\nMarken det er produceret på: %s"
-                , navn,mængdeLiter,alkProcent, "%",mark);
+                , navn,mængdeLiter,alkProcent, " %",mark);
     }
 }

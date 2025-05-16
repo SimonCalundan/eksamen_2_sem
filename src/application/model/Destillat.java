@@ -66,8 +66,8 @@ public class Destillat implements Serializable {
         return String.format("Fad: %s" +
                         "\nDato for påfyldning af destillat: %s" +
                 "\nMængde af destillat: %.2f"+ " liter" +
-                "\nAlkholprocent: %.2f%"+"%",fad.getNr()
-                , datoForPåfyldning,faktiskMængdeLiter,faktiskAlkoholProcentVistIProcent);
+                "\nAlkholprocent: %.2f %s",fad.getNr()
+                , datoForPåfyldning,faktiskMængdeLiter,faktiskAlkoholProcentVistIProcent, "%");
     }
 
     //link metoder
