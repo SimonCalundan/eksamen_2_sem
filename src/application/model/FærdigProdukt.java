@@ -52,11 +52,13 @@ public class FærdigProdukt implements Serializable {
         return "%s %.2f%s %.2f%s".formatted(navn + ",", totalMængdeLiter, "L", endeligAlkoholdProcent, "%");
     }
 
+    //TODO den gider ikke spytte 2 decimaler ud
     public String GUIview() {
         var sb = new StringBuilder("Navn: " + navn);
         sb.append("\nProdukttype: " + type.toString().toLowerCase());
         sb.append("\nLiter tappet: " + totalMængdeLiter);
-        sb.append("\nAlkoholprocent: " + endeligAlkoholdProcent);
+        double alkProcent = endeligAlkoholdProcent *100;
+        sb.append("\nAlkoholprocent: " + alkProcent + "%");
         if (vandMængde > 0) {
             double vandprocent = vandMængde / totalMængdeLiter * 100;
             sb.append("\n%s %.1f %s (%.1f%s)".formatted("Andel vand:", vandMængde, "liter", vandprocent,"%"));

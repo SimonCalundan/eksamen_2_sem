@@ -18,6 +18,7 @@ public abstract class Controller {
         return storage.getBatches();
     }
 
+    //TODO der er ikke påført mark i constructor og der mangler at håndtere exceptions
     /**
      * Opretter og gemmer et nyt batch
      *
@@ -145,7 +146,6 @@ public abstract class Controller {
     }
 
     //Batch mængde
-
     /**
      * Opretter og gemmer en Batchmængde
      *
@@ -171,7 +171,6 @@ public abstract class Controller {
     }
 
     //Destillat mængde
-
     /**
      * Opretter og gemmer destillatmængde
      *
@@ -198,7 +197,6 @@ public abstract class Controller {
 
 
     //Lager
-
     /**
      * Opretter og gemmer et nyt lager i systemet
      *
@@ -264,8 +262,8 @@ public abstract class Controller {
         return reol.getHylder();
     }
 
+    //TODO der mangler at være dato med ind i constructoren og exception for dato er ikke håndteret
     //FærdigProdukt
-
     /**
      * Opretter og gemmer færdig produkt
      *
@@ -298,6 +296,7 @@ public abstract class Controller {
         return færdigProduktToAdd;
     }
 
+    //TODO alt er ikke 100% aligned med hinaden
     /**
      * Returnerer en String af det inputtede produkts historik
      *

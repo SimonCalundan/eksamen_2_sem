@@ -46,6 +46,7 @@ public class FærdigProduktFane extends MainFane {
         taProduktHistorik = new TextArea();
         grid.add(taProduktHistorik, 1, 3);
 
+        //programmet går ned når man hopper fra din fane til en anden.
         ChangeListener<FærdigProdukt> listener = (ov, oldFærdigProdukt, newFærdigProdukt) -> this.færdigProduktSelectionChanged();
         lwFærdigProdukt.getSelectionModel().selectedItemProperty().addListener(listener);
 

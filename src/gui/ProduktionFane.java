@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,10 +120,11 @@ public class ProduktionFane extends MainFane {
         Label lbldato = new Label("Dato for påfyldning");
         midterBoxTop.getChildren().add(lbldato);
 
+        //TODO jeg kan ikke få det her lort til at blive parset korrekt!
         midterBoxTop.getChildren().add(txfDateTimeForOprettelseAfDestillat);
-        txfDateTimeForOprettelseAfDestillat.setPromptText("ex: 2007-12-03T10:15:30");
+        txfDateTimeForOprettelseAfDestillat.setPromptText("ex: 2007-12-03 10:15:30");
 
-        Label lblDatoFormat = new Label("år-måned-dagTtimer:min:sek");
+        Label lblDatoFormat = new Label("yyyy-MM-dd HH:mm:ss");
         lblDatoFormat.setStyle("-fx-font-style: italic;");
         midterBoxTop.getChildren().add(lblDatoFormat);
 
@@ -285,6 +287,7 @@ public class ProduktionFane extends MainFane {
         txfDateTimeForOprettelseAfDestillat.clear();
         batchListView.getSelectionModel().clearSelection();
         fadListView.getSelectionModel().clearSelection();
+        påfyldtMængdeBatchListview.getItems().clear();
         btnTilføjBatch.setDisable(true);
     }
 
@@ -293,6 +296,8 @@ public class ProduktionFane extends MainFane {
         txfVandMængde.clear();
         produktVariantListView.getSelectionModel().clearSelection();
         txfNavn.clear();
+        destillatMin3årListView.getSelectionModel().clearSelection();
+        påfyldtMængdeDestillatListview.getItems().clear();
         btnTilføjDestillat.setDisable(true);
     }
 
@@ -367,8 +372,9 @@ public class ProduktionFane extends MainFane {
     private void påfyldMængdeAction() {
         try {
             LocalDateTime dato = LocalDateTime.parse(txfDateTimeForOprettelseAfDestillat.getText().trim());
-            Controller.createDestillat(dato, fadListView.getSelectionModel().getSelectedItem(), påfyldtMængdeBatchListview.getItems());
+            Destillat påfyldning = Controller.createDestillat(dato, fadListView.getSelectionModel().getSelectedItem(), påfyldtMængdeBatchListview.getItems());
             nulstilProduktionAction();
+            showAlert("Påfyldning udført", "Du har nu påført et destillat til et fad", påfyldning.GUIview());
         } catch (Exception e) {
             showAlert("Fejl", "Fejl under påfyldning af fad", e.getMessage());
         }
@@ -378,8 +384,12 @@ public class ProduktionFane extends MainFane {
     private void opretFærdigProduktAction() {
         try {
             double vandmængde = Double.parseDouble(txfVandMængde.getText().trim());
-            Controller.createFærdigProdukt(txfNavn.getText().trim(), produktVariantListView.getSelectionModel().getSelectedItem(), vandmængde, påfyldtMængdeDestillatListview.getItems());
+            //TODO Kan ikke få den til at blive parset korrekt.
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime.parse(txfDateTimeForOprettelseAfDestillat.getText().trim(),formatter);
+            FærdigProdukt færdigprodukt = Controller.createFærdigProdukt(txfNavn.getText().trim(), produktVariantListView.getSelectionModel().getSelectedItem(), vandmængde, påfyldtMængdeDestillatListview.getItems());
             nulstilFærdigProduktAction();
+            showAlert("Whisky er produceret", "Du har produceret whisky ",færdigprodukt.GUIview());
         } catch (Exception e) {
             showAlert("Fejl", "Fejl under oprettelse af færdig produkt", e.getMessage());
         }
