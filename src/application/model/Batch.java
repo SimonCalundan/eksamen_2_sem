@@ -47,16 +47,16 @@ public class Batch implements Serializable {
 
     @Override
     public String toString(){
-        return "%s %.2f".formatted(navn, mængdeLiter);
+        return "%s %.2f%s".formatted(navn, mængdeLiter,"liter");
     }
 
     //TODO den gider ikke give mig 2 decimaler
     public String GUIview(){
-        String alkProcent = this.alkoholProcent * 100 + "%";
+        double alkProcent = alkoholProcent * 100;
         return String.format("Batch: %s" +
-                "\nMængde: %s" +"liter" +
-                "\nAlkoholprocent: %s" +
+                "\nMængde: %s" +" liter" +
+                "\nAlkoholprocent: %.2f%s" +
                 "\nMarken det er produceret på: %s"
-                , navn,mængdeLiter,alkProcent,mark);
+                , navn,mængdeLiter,alkProcent, "%",mark);
     }
 }

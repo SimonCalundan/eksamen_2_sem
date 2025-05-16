@@ -13,14 +13,14 @@ public class FærdigProdukt implements Serializable {
     private List<DestillatMængde> tappetmængder;
     private double totalMængdeLiter;
     private double endeligAlkoholdProcent;
-    private LocalDate produktionsDag;
+    private LocalDate produktionsDato;
 
     public FærdigProdukt(String navn, ProduktVariant type, double vandMængde) {
         this.navn = navn;
         this.type = type;
         this.vandMængde = vandMængde;
         this.totalMængdeLiter = vandMængde;
-
+        this.produktionsDato = LocalDate.now();
         this.tappetmængder = new ArrayList<>();
     }
 
@@ -60,10 +60,10 @@ public class FærdigProdukt implements Serializable {
         sb.append("\nProdukttype: " + type.toString().toLowerCase());
         sb.append("\nLiter tappet: " + totalMængdeLiter);
         double alkProcent = endeligAlkoholdProcent *100;
-        sb.append("\nAlkoholprocent:" + alkProcent + "%");
+        sb.append("\nAlkoholprocent: %.1f %s ".formatted(alkProcent,"%"));
         if (vandMængde > 0) {
             double vandprocent = vandMængde / totalMængdeLiter * 100;
-            sb.append("\n%s %.1f %s (%.1f%s)".formatted("Andel vand:", vandMængde, "liter", vandprocent,"%"));
+            sb.append("\n%s %.2f %s (%.2f%s)".formatted("Andel vand:", vandMængde, "liter", vandprocent,"%"));
         }
         else {
             sb.append("\nIntet vand tilsat");

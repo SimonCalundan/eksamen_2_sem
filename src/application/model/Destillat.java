@@ -60,13 +60,12 @@ public class Destillat implements Serializable {
                 " Fad: " + fad.getNr();
     }
 
-    //TODO den gider ikke give mig 2 decimaler
     public String GUIview(){
         double faktiskAlkoholProcentVistIProcent = faktiskAlkoholProcent *100;
         return String.format("Fad: %s" +
                         "\nDato for påfyldning af destillat: %s" +
-                "\nMængde af destillat: %f"+ "liter" +
-                "\nAlkholprocent: %f%"+"%",fad.getNr()
+                "\nMængde af destillat: %.2f"+ " liter" +
+                "\nAlkholprocent: %.2f%"+"%",fad.getNr()
                 , datoForPåfyldning,faktiskMængdeLiter,faktiskAlkoholProcentVistIProcent);
     }
 

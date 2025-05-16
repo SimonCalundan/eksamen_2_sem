@@ -18,13 +18,13 @@ public abstract class Controller {
         return storage.getBatches();
     }
 
-    //TODO der er ikke påført mark i constructor og der mangler at håndtere exceptions
     /**
      * Opretter og gemmer et nyt batch
      *
      * @param navn           navnet på det oprettede batch
      * @param mængdeILiter   hvor mange liter er batchet
      * @param alkoholProcent batchests alkoholprocent. Skal være en værdi mellem 0 og 1
+     * @param mark marken hvor batchens malt er produceret på
      * @return det oprettede batch
      * @throws IllegalArgumentException hvis mængdeILiter er mindre eller lig med 0,
      *                                  alkoholProcent ikke er mellem 0 og 1 eller hvis navn input er tomt
@@ -38,6 +38,8 @@ public abstract class Controller {
         }
         if (navn.isBlank()) {
             throw new IllegalArgumentException("Navn må ikke være tomt");
+        } if (mark.isBlank()) {
+            throw new IllegalArgumentException("Mark må ikke være tomt");
         }
         var batchToAdd = new Batch(navn, mængdeILiter, alkoholProcent, mark);
         storage.addBatch(batchToAdd);
@@ -262,7 +264,6 @@ public abstract class Controller {
         return reol.getHylder();
     }
 
-    //TODO der mangler at være dato med ind i constructoren og exception for dato er ikke håndteret
     //FærdigProdukt
     /**
      * Opretter og gemmer færdig produkt

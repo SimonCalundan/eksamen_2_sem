@@ -85,9 +85,13 @@ public class Fad implements Serializable {
 
     @Override
     public String toString() {
-        return "%d, %.2f, %s, %s, %s, %s, %s"
-                .formatted(nr, størrelseLiter, (getDestillat() == null ? "intet destillat" : getDestillat().getId()), "gange brugt: " + brugtGange, hylde,
+        return "%s %d, %s %.2f, %s, %s, %s, %s, %s"
+                .formatted("Fad nr: ",nr, "Størrelse: ", størrelseLiter, (getDestillat() == null ? "Intet destillat" : getDestillat().getId()), "Gange brugt: " + brugtGange, hylde,
                         træsort, leverandør);
+    }
+
+    public String GUIwiev(){
+        return "%s %d, %s %.2f, %s".formatted("Fad nr: ",nr, "Størrelse: ", størrelseLiter, (getDestillat() == null ? "Intet destillat" : getDestillat().getId()));
     }
 
     //linkmetoder

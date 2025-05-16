@@ -42,6 +42,7 @@ public class LagerFane extends MainFane {
         grid.add(lblLager, 0, 0);
 
         lwLagre = new ListView<>();
+        lwLagre.setPrefWidth(150);
         grid.add(lwLagre, 0, 1, 2, 5);
         List<Lager> lagerList = Controller.getLagre();
         selectedLager = !lagerList.isEmpty() ? lagerList.getFirst() : null;
@@ -71,6 +72,7 @@ public class LagerFane extends MainFane {
         Label lblReol = new Label("Reoler");
         grid.add(lblReol, 3, 0);
         lwReoler = new ListView<>();
+        lwReoler.setPrefWidth(60);
         grid.add(lwReoler, 3, 1, 2, 5);
         List<Reol> reolList = selectedLager != null ? selectedLager.getReoler() : new ArrayList<>();
         selectdReol = !reolList.isEmpty() ? reolList.getFirst() : null;
@@ -95,6 +97,7 @@ public class LagerFane extends MainFane {
         grid.add(lblHylde, 6, 0);
 
         lwHylder = new ListView<>();
+        lwHylder.setPrefWidth(60);
         grid.add(lwHylder, 6, 1, 2, 5);
         List<Hylde> hyldeList = selectdReol != null ? selectdReol.getHylder() : new ArrayList<>();
         seletedHylde = !hyldeList.isEmpty() ? hyldeList.getFirst() : null;
@@ -130,7 +133,7 @@ public class LagerFane extends MainFane {
                     setText(null);
                     setStyle("");
                 } else {
-                    setText(fad.toString());
+                    setText(fad.GUIwiev());
                     String color = getFadColorFromCapacity(fad);
                     setStyle("-fx-control-inner-background: " + color + ";");
                 }

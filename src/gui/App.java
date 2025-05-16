@@ -1,8 +1,7 @@
 package gui;
 
 import application.controller.Controller;
-import application.model.BatchMængde;
-import application.model.FærdigProdukt;
+import application.model.*;
 import javafx.application.Application;
 import storage.ListStorage;
 import storage.Storage;
@@ -23,10 +22,6 @@ public class App {
         initStorage();
         Application.launch(MainFane.class);
         saveStorage(storage);
-
-        for (var d : Controller.getDestillater())  {
-            System.out.println(d.getFaktiskAlkoholProcent());
-        }
     }
 
     public static Storage loadStorage() {
@@ -104,12 +99,14 @@ public class App {
         List<BatchMængde> bm1 = new ArrayList<>();
         bm1.add(Controller.createBatchMængde(batch1, 10));
         bm1.add( Controller.createBatchMængde(batch2,30));
-        Controller.createDestillat(LocalDateTime.of(2000,3,14,10,12),fad1,bm1);
-        List<FærdigProdukt> fpList = Controller.getFærdigProdukter();
-        System.out.println(fpList);
-        if (!fpList.isEmpty()){
-            System.out.println(Controller.getFærdigProduktHistorik(fpList.getFirst()));
-        }
+        Destillat d1 = Controller.createDestillat(LocalDateTime.of(2000,3,14,10,12),fad1,bm1);
+
+        Controller.createDestillatMængde(d1, 10);
+
+        List<DestillatMængde> dm1 = new ArrayList<>();
+        dm1.add(Controller.createDestillatMængde(d1,10));
+
+        Controller.createFærdigProdukt("Hokuspokus 1.1", ProduktVariant.WHISKY, 10,dm1);
 
         // Evt. logning
         System.out.println("Lagre og fade er initialiseret.");
