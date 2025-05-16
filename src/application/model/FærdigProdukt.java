@@ -54,7 +54,6 @@ public class FærdigProdukt implements Serializable {
         return "%s %.2f%s %.2f%s".formatted(navn + ",", totalMængdeLiter, " liter,", endeligAlkoholdProcent, " %");
     }
 
-    //TODO den gider ikke spytte 2 decimaler ud
     public String GUIview() {
         var sb = new StringBuilder("Navn: " + navn);
         sb.append("\nProdukttype: " + type.toString().toLowerCase());

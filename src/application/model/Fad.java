@@ -70,6 +70,7 @@ public class Fad implements Serializable {
         }
     }
 
+    //TODO mangler et eller andet for at logikken kan forstået i produktionspanen
     public String fadOversigt() {
         return """
                 Fad nr: %s
@@ -79,19 +80,20 @@ public class Fad implements Serializable {
                 Træsort: %s
                 Leverandør: %s
                 """.formatted(nr, størrelseLiter,
-                (getDestillat() == null ? "intet destillat" : getDestillat().getId()),
+                (getDestillat() == null ? "intet" : getDestillat().getId()),
                 brugtGange, træsort, leverandør);
     }
 
+    //TODO mangler lidt så det kan forståes ordentligt
     @Override
     public String toString() {
-        return "%s %d, %s %.2f, %s, %s, %s, %s, %s"
-                .formatted("Fad nr: ",nr, "Størrelse: ", størrelseLiter, (getDestillat() == null ? "Intet destillat" : getDestillat().getId()), "Gange brugt: " + brugtGange, hylde,
+        return "%s %d, %s %.2f, %s %s, %s, %s, %s, %s"
+                .formatted("Fad nr: ",nr, "Størrelse: ", størrelseLiter,"Destillater: ", (getDestillat() == null ? "intet" : getDestillat().getId()), "Gange brugt: " + brugtGange, hylde,
                         træsort, leverandør);
     }
 
     public String GUIwiev(){
-        return "%s %d, %s %.2f, %s".formatted("Fad nr: ",nr, "Størrelse: ", størrelseLiter, (getDestillat() == null ? "Intet destillat" : getDestillat().getId()));
+        return "%s %d, %s %.2f, %s %s".formatted("Fad nr: ",nr, "Størrelse: ", størrelseLiter,"Destillater: ", (getDestillat() == null ? "intet" : getDestillat().getId()));
     }
 
     //linkmetoder

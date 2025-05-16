@@ -297,7 +297,6 @@ public abstract class Controller {
         return færdigProduktToAdd;
     }
 
-    //TODO der mangler at blive rettet i noget tekst her % kig i GUI
     /**
      * Returnerer en String af det inputtede produkts historik
      *
@@ -336,9 +335,10 @@ public abstract class Controller {
                 """);
         sb.append("%-15s %-15s %-15s %n".formatted("Andel i Liter", "Alkohol %", "Dato for påfyldning"));
         destillatMængder.forEach(dm -> {
+            double alkProcent = dm.getDestillat().getFaktiskAlkoholProcent() * 100;
             String s = "%-15.2f %-15.2f %-15s %n"
                     .formatted(dm.getMængdeLiter(),
-                            dm.getDestillat().getFaktiskAlkoholProcent(),
+                            alkProcent,
                             dm.getDestillat().getDatoForPåfyldning());
             sb.append(s);
         });
@@ -365,9 +365,10 @@ public abstract class Controller {
                 """);
         sb.append("%-15s %-15s %-15s %-15s %n".formatted("Navn", "Andel i liter", "alkohol %", "Mark"));
         batchMængder.forEach(bm -> {
+            double alkProcent = bm.getBatch().getAlkoholProcent() * 100;
             String s = "%-15s %-15.2f %-15.2f %-15s %n".formatted(
                     bm.getBatch().getNavn(),
-                    bm.getMængdeILiter(), bm.getBatch().getAlkoholProcent(),
+                    bm.getMængdeILiter(), alkProcent,
                     bm.getBatch().getMark()
             );
             sb.append(s);
