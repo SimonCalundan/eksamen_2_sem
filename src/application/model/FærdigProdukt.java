@@ -51,7 +51,7 @@ public class FærdigProdukt implements Serializable {
 
     @Override
     public String toString() {
-        return "%s %.2f%s %.2f%s".formatted(navn + ",", totalMængdeLiter, "L", endeligAlkoholdProcent, "%");
+        return "%s %.2f%s %.2f%s".formatted(navn + ",", totalMængdeLiter, " liter", endeligAlkoholdProcent, " %");
     }
 
     //TODO den gider ikke spytte 2 decimaler ud
@@ -60,10 +60,10 @@ public class FærdigProdukt implements Serializable {
         sb.append("\nProdukttype: " + type.toString().toLowerCase());
         sb.append("\nLiter tappet: " + totalMængdeLiter);
         double alkProcent = endeligAlkoholdProcent *100;
-        sb.append("\nAlkoholprocent: %.1f %s ".formatted(alkProcent,"%"));
+        sb.append("\nAlkoholprocent: %.1f %s ".formatted(alkProcent," %"));
         if (vandMængde > 0) {
             double vandprocent = vandMængde / totalMængdeLiter * 100;
-            sb.append("\n%s %.2f %s (%.2f%s)".formatted("Andel vand:", vandMængde, "liter", vandprocent,"%"));
+            sb.append("\n%s %.2f %s (%.2f%s)".formatted("Andel vand:", vandMængde, " liter", vandprocent," %"));
         }
         else {
             sb.append("\nIntet vand tilsat");

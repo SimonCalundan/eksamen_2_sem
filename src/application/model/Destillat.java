@@ -53,10 +53,11 @@ public class Destillat implements Serializable {
 
     @Override
     public String toString() {
+        double alkProcent = faktiskAlkoholProcent *100;
         return "Destillatid: " + id +
                 " Dato for påfyldning: " + datoForPåfyldning +
                 " Mængde i liter: " + faktiskMængdeLiter +
-                " Alkoholprocent: " + faktiskAlkoholProcent +
+                " Alkoholprocent: " + alkProcent + " %"+
                 " Fad: " + fad.getNr();
     }
 
