@@ -126,6 +126,7 @@ public class ProduktionFane extends MainFane {
         lblDatoFormat.setStyle("-fx-font-style: italic;");
         midterBoxTop.getChildren().add(lblDatoFormat);
 
+
         //Højrebox
         //------------------------------------------------------------------------------------------------------------
 
@@ -191,9 +192,9 @@ public class ProduktionFane extends MainFane {
 
         //Bundboxmidt
         //------------------------------------------------------------------------------------------------------------
-        VBox midtBundBox = new VBox();
+        VBox midtBundBox = new VBox(5);
         midtBundBox.setAlignment(Pos.CENTER);
-        midtBundBox.setSpacing(5);
+        midtBundBox.setSpacing(6);
         samletBoxMidt.getChildren().add(midtBundBox);
 
         Label lblProduktkategoriVariant = new Label("Produkt variant");
@@ -205,11 +206,12 @@ public class ProduktionFane extends MainFane {
         produktVariantListView.setPrefHeight(100);
         produktVariantListView.getItems().setAll(ProduktVariant.values());
 
+        Label lblNone1 = new Label();
+        midtBundBox.getChildren().add(lblNone1);
+
         ChangeListener<ProduktVariant> listenerProduktVariant = (ov, oldString, newString) -> this.selectionChangedProduktionsVariant();
         produktVariantListView.getSelectionModel().selectedItemProperty().addListener(listenerProduktVariant);
 
-        Label lblNone1 = new Label();
-        midtBundBox.getChildren().add(lblNone1);
 
         Label lblVandindhold = new Label("Vandindhold");
         midtBundBox.getChildren().add(lblVandindhold);
