@@ -1,6 +1,7 @@
 package gui;
 
 import application.controller.Controller;
+import application.model.Batch;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -65,20 +66,21 @@ public class CreateBatchVindue extends Stage {
             double alkoholProcent;
             mængdeILiter = Double.parseDouble(txfMængdeILiter.getText().trim());
             alkoholProcent = Double.parseDouble(txfAlkoholProcent.getText().trim());
-            Controller.createBatch(navn,mængdeILiter,alkoholProcent, mark);
+            Batch batch = Controller.createBatch(navn,mængdeILiter,alkoholProcent, mark);
+            showAlert("Batch oprettet", "Du har oprettet et batch", batch.GUIview());
             closeWindow();
             hide();
         } catch (NumberFormatException e) {
-            showAlert("Fejl under opret batch", "Forkert tal input");
+            showAlert("Fejl","Fejl under opret batch", "Forkert tal input");
         } catch
          (Exception e) {
-            showAlert("Fejl under opret batch", e.getMessage());
+            showAlert("Fejl","Fejl under opret batch", e.getMessage());
         }
     }
 
-    private void showAlert(String headerText, String contentText) {
+    private void showAlert(String top, String headerText, String contentText) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Fejl");
+        alert.setTitle(top);
         alert.setHeaderText(headerText);
         alert.setContentText(contentText);
         alert.showAndWait();

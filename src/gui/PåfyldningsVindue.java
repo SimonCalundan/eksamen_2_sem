@@ -35,13 +35,13 @@ public class PåfyldningsVindue extends Stage {
 
         lblBeskrivelse = new Label();
         txaType = new TextArea();
-        txaType.setPrefWidth(10);
-        txaType.setPrefHeight(10);
+        txaType.setPrefWidth(300);
+        txaType.setPrefHeight(80);
         txaType.setEditable(false);
 
         if (type instanceof Destillat destillat) {
             lblBeskrivelse = new Label("Hvor meget vil du tappe fra dette destillat?");
-            txaType.setText(destillat.toString());
+            txaType.setText(destillat.GUIview());
         } else if (type instanceof Batch batch){
             lblBeskrivelse = new Label("Hvor meget vil du tappe fra dette batch?");
             txaType.setText(batch.toString());
@@ -63,7 +63,7 @@ public class PåfyldningsVindue extends Stage {
         grid.add(btnLuk,1,4);
         btnLuk.setOnAction(event -> closeWindow());
 
-        Scene scene = new Scene(grid, 300, 200);
+        Scene scene = new Scene(grid, 400, 250);
         this.setScene(scene);
     }
 
@@ -82,8 +82,8 @@ public class PåfyldningsVindue extends Stage {
                 bm = Controller.createBatchMængde((Batch) type, mængde);
             }
             closeWindow();
-        }catch (IllegalArgumentException e) {
-            showAlert("Fejl i mængde", e.getMessage());
+        }catch (Exception e) {
+            showAlert(e.getMessage());
         }
     }
 
@@ -96,10 +96,10 @@ public class PåfyldningsVindue extends Stage {
     }
 
     //allert
-    private void showAlert(String headerText, String contentText) {
+    private void showAlert( String contentText) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Fejl");
-        alert.setHeaderText(headerText);
+        alert.setHeaderText("Fejl i mængde");
         alert.setContentText(contentText);
         alert.showAndWait();
     }

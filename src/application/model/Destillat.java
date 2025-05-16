@@ -53,11 +53,21 @@ public class Destillat implements Serializable {
 
     @Override
     public String toString() {
-        return "Destillat{" +
-                "id=" + id +
-                ", datoForPåfyldning=" + datoForPåfyldning +
-                ", fad=" + fad +
-                '}';
+        return "Destillatid: " + id +
+                " Dato for påfyldning: " + datoForPåfyldning +
+                " Mængde i liter: " + faktiskMængdeLiter +
+                " Alkoholprocent: " + faktiskAlkoholProcent +
+                " Fad: " + fad.getNr();
+    }
+
+    //TODO den gider ikke give mig 2 decimaler
+    public String GUIview(){
+        double faktiskAlkoholProcentVistIProcent = faktiskAlkoholProcent *100;
+        return String.format("Fad: %s" +
+                        "\nDato for påfyldning af destillat: %s" +
+                "\nMængde af destillat: %f"+ "liter" +
+                "\nAlkholprocent: %f%"+"%",fad.getNr()
+                , datoForPåfyldning,faktiskMængdeLiter,faktiskAlkoholProcentVistIProcent);
     }
 
     //link metoder
