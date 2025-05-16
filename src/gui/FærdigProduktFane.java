@@ -61,11 +61,15 @@ public class FærdigProduktFane extends MainFane {
     }
 
     public void færdigProduktSelectionChanged() {
+        if (lwFærdigProdukt.getSelectionModel().getSelectedItem() != null) {
             taProduktInfo.setText(lwFærdigProdukt.getSelectionModel().getSelectedItem().GUIview());
             taProduktHistorik.setText(Controller.getFærdigProduktHistorik(lwFærdigProdukt.getSelectionModel().getSelectedItem()));
+        }
     }
 
     private void onTabVisited() {
         lwFærdigProdukt.getItems().setAll(Controller.getFærdigProdukter());
+        taProduktInfo.clear();
+        taProduktHistorik.clear();
     }
 }
