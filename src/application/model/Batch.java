@@ -47,7 +47,7 @@ public class Batch implements Serializable {
 
     @Override
     public String toString(){
-        return "%s %.2f%s".formatted(navn, mængdeLiter,"liter");
+        return "%s %.2f%s".formatted(navn, mængdeLiter," liter");
     }
 
     //TODO den gider ikke give mig 2 decimaler
