@@ -11,7 +11,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,9 +121,9 @@ public class ProduktionFane extends MainFane {
 
         //TODO jeg kan ikke få det her lort til at blive parset korrekt!
         midterBoxTop.getChildren().add(txfDateTimeForOprettelseAfDestillat);
-        txfDateTimeForOprettelseAfDestillat.setPromptText("ex: 2007-12-03 10:15:30");
+        txfDateTimeForOprettelseAfDestillat.setPromptText("ex: 2020-12-03T10:15:30");
 
-        Label lblDatoFormat = new Label("yyyy-MM-dd HH:mm:ss");
+        Label lblDatoFormat = new Label("yyyy-mm-ddThh:mm:ss");
         lblDatoFormat.setStyle("-fx-font-style: italic;");
         midterBoxTop.getChildren().add(lblDatoFormat);
 
@@ -384,9 +383,6 @@ public class ProduktionFane extends MainFane {
     private void opretFærdigProduktAction() {
         try {
             double vandmængde = Double.parseDouble(txfVandMængde.getText().trim());
-            //TODO Kan ikke få den til at blive parset korrekt.
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            LocalDateTime.parse(txfDateTimeForOprettelseAfDestillat.getText().trim(),formatter);
             FærdigProdukt færdigprodukt = Controller.createFærdigProdukt(txfNavn.getText().trim(), produktVariantListView.getSelectionModel().getSelectedItem(), vandmængde, påfyldtMængdeDestillatListview.getItems());
             nulstilFærdigProduktAction();
             showAlert("Whisky er produceret", "Du har produceret whisky ",færdigprodukt.GUIview());

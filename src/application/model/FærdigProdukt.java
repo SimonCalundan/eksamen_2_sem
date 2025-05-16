@@ -1,6 +1,7 @@
 package application.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ public class FærdigProdukt implements Serializable {
     private List<DestillatMængde> tappetmængder;
     private double totalMængdeLiter;
     private double endeligAlkoholdProcent;
+    private LocalDate produktionsDag;
 
     public FærdigProdukt(String navn, ProduktVariant type, double vandMængde) {
         this.navn = navn;
@@ -58,7 +60,7 @@ public class FærdigProdukt implements Serializable {
         sb.append("\nProdukttype: " + type.toString().toLowerCase());
         sb.append("\nLiter tappet: " + totalMængdeLiter);
         double alkProcent = endeligAlkoholdProcent *100;
-        sb.append("\nAlkoholprocent: " + alkProcent + "%");
+        sb.append("\nAlkoholprocent:" + alkProcent + "%");
         if (vandMængde > 0) {
             double vandprocent = vandMængde / totalMængdeLiter * 100;
             sb.append("\n%s %.1f %s (%.1f%s)".formatted("Andel vand:", vandMængde, "liter", vandprocent,"%"));
