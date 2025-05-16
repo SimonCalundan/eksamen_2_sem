@@ -297,7 +297,7 @@ public abstract class Controller {
         return færdigProduktToAdd;
     }
 
-    //TODO alt er ikke 100% aligned med hinaden
+    //TODO der mangler at blive rettet i noget tekst her % kig i GUI
     /**
      * Returnerer en String af det inputtede produkts historik
      *
