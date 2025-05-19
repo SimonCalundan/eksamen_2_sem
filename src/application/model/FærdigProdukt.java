@@ -51,7 +51,7 @@ public class FærdigProdukt implements Serializable {
 
     @Override
     public String toString() {
-        return "%s %.2f%s %.2f%s".formatted(navn + ",", totalMængdeLiter, " liter,", endeligAlkoholdProcent, " %");
+        return "%s %.2f%s %.2f%s".formatted(navn + ",", totalMængdeLiter, " liter,", endeligAlkoholdProcent * 100, " %");
     }
 
     public String GUIview() {
