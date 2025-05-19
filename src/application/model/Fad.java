@@ -75,7 +75,7 @@ public class Fad implements Serializable {
         return """
                 Fad nr: %s
                 Størrelse i Liter: %.2f
-                Nuværende destillat: %s
+                Nuværende destillat id: %s
                 Gange brugt: %d
                 Træsort: %s
                 Leverandør: %s
@@ -88,7 +88,7 @@ public class Fad implements Serializable {
     @Override
     public String toString() {
         return "%s %d, %s %.2f, %s %s, %s, %s, %s, %s"
-                .formatted("Fad nr: ",nr, "Størrelse: ", størrelseLiter,"Destillater: ", (getDestillat() == null ? "intet" : getDestillat().getId()), "Gange brugt: " + brugtGange, hylde,
+                .formatted("Fad nr: ",nr, "Størrelse: ", størrelseLiter,"Destillat id: ", (getDestillat() == null ? "intet" : getDestillat().getId()), "Gange brugt: " + brugtGange, hylde,
                         træsort, leverandør);
     }
 

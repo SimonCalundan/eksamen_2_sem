@@ -120,9 +120,9 @@ public class ProduktionFane extends MainFane {
         midterBoxTop.getChildren().add(lbldato);
 
         midterBoxTop.getChildren().add(txfDateTimeForOprettelseAfDestillat);
-        txfDateTimeForOprettelseAfDestillat.setPromptText("ex: 2020-12-03T10:15:30");
+        txfDateTimeForOprettelseAfDestillat.setPromptText("ex: 2020-12-03T10:15");
 
-        Label lblDatoFormat = new Label("yyyy-mm-ddThh:mm:ss");
+        Label lblDatoFormat = new Label("yyyy-mm-ddThh:mm");
         lblDatoFormat.setStyle("-fx-font-style: italic;");
         midterBoxTop.getChildren().add(lblDatoFormat);
 
@@ -142,7 +142,7 @@ public class ProduktionFane extends MainFane {
         højreBox.getChildren().add(fadListView);
         fadListView.setPrefWidth(400);
         fadListView.setPrefHeight(200);
-        fadListView.getItems().setAll(Controller.getFade());
+        fadListView.getItems().setAll(fadeUdenIndhold());
 
         ChangeListener<Fad> listenerFad = (ov, oldString, newString) -> this.selectionChangedFade();
         fadListView.getSelectionModel().selectedItemProperty().addListener(listenerFad);
@@ -275,6 +275,17 @@ public class ProduktionFane extends MainFane {
         return tab;
     }
 
+    //liste til fadListview uden indhold
+    private List<Fad> fadeUdenIndhold(){
+        List<Fad> fadUdenIndhold = new ArrayList<>();
+        for (Fad fad : Controller.getFade()) {
+            if (fad.getDestillat() == null) {
+                fadUdenIndhold.add(fad);
+            }
+        }
+        return fadUdenIndhold;
+    }
+
     //knapfunktion til batch
     private void createBatchAction() {
         batchVindue.showAndWait();
@@ -337,9 +348,8 @@ public class ProduktionFane extends MainFane {
     private List<Destillat> getDestillaterPåLagerMin3År() {
         LocalDateTime treÅrSiden = LocalDateTime.now().minusYears(3);
         List<Destillat> destillatMin3År = new ArrayList<>();
-        System.out.println(Controller.getDestillater());
         for (Destillat destillat : Controller.getDestillater()) {
-            if (destillat.getDatoForPåfyldning().isBefore(treÅrSiden)) {
+            if (destillat.getDatoForPåfyldning().isBefore(treÅrSiden) && destillat.getFaktiskMængdeLiter() > 0) {
                 destillatMin3År.add(destillat);
             }
         }
@@ -373,6 +383,9 @@ public class ProduktionFane extends MainFane {
             LocalDateTime dato = LocalDateTime.parse(txfDateTimeForOprettelseAfDestillat.getText().trim());
             Destillat påfyldning = Controller.createDestillat(dato, fadListView.getSelectionModel().getSelectedItem(), påfyldtMængdeBatchListview.getItems());
             nulstilProduktionAction();
+            batchListView.getItems().setAll(batchesMedIndhold());
+            destillatMin3årListView.getItems().setAll(getDestillaterPåLagerMin3År());
+            fadListView.getItems().setAll(fadeUdenIndhold());
             showAlert("Påfyldning udført", "Du har nu påført et destillat til et fad", påfyldning.GUIview());
         } catch (Exception e) {
             showAlert("Fejl", "Fejl under påfyldning af fad", e.getMessage());
@@ -385,6 +398,7 @@ public class ProduktionFane extends MainFane {
             double vandmængde = Double.parseDouble(txfVandMængde.getText().trim());
             FærdigProdukt færdigprodukt = Controller.createFærdigProdukt(txfNavn.getText().trim(), produktVariantListView.getSelectionModel().getSelectedItem(), vandmængde, påfyldtMængdeDestillatListview.getItems());
             nulstilFærdigProduktAction();
+            destillatMin3årListView.getItems().setAll(getDestillaterPåLagerMin3År());
             showAlert("Whisky er produceret", "Du har produceret whisky ",færdigprodukt.GUIview());
         } catch (Exception e) {
             showAlert("Fejl", "Fejl under oprettelse af færdig produkt", e.getMessage());

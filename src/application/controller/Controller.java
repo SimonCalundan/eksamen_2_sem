@@ -329,9 +329,9 @@ public abstract class Controller {
 
         sb.append("""
                 
-                ==============================
+                ============================================================
                 Destillater
-                ==============================
+                ============================================================
                 """);
         sb.append("%-15s %-15s %-15s %n".formatted("Andel i Liter", "Alkohol %", "Dato for påfyldning"));
         destillatMængder.forEach(dm -> {
@@ -345,9 +345,9 @@ public abstract class Controller {
 
         sb.append("""
                 
-                ==============================
+                ============================================================
                 Fade
-                ==============================
+                ============================================================
                 """);
         sb.append("%-15s %-15s %-15s %-15s %n".formatted("Størrelse", "Leverandør", "Træsort", "Gange brugt"));
         fade.forEach(fad -> {
@@ -359,9 +359,9 @@ public abstract class Controller {
 
         sb.append("""
                 
-                ==============================
+                ============================================================
                 Batches
-                ==============================
+                ============================================================
                 """);
         sb.append("%-15s %-15s %-15s %-15s %n".formatted("Navn", "Andel i liter", "alkohol %", "Mark"));
         batchMængder.forEach(bm -> {
